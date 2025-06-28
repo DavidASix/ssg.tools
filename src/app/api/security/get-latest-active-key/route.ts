@@ -13,13 +13,12 @@ export const GET: RequestHandler<NextRouteContext> = withAuth(
   async (_, context) => {
     const { user_id } = context;
     try {
-      const apiKey = await db
+      const [apiKey] = await db
         .select()
         .from(api_keys)
         .where(and(eq(api_keys.user_id, user_id), eq(api_keys.expired, false)))
-        .orderBy(desc(api_keys.created_at))
-        .then((rows) => rows[0]);
-      const decryptedKey = await decrypt(apiKey?.key || "");
+        .orderBy(desc(api_keys.created_at));
+      const decryptedKey = apiKey ? await decrypt(apiKey?.key || "") : null;
       const response = schema.response.parse({
         apiKey: decryptedKey,
       });
