@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { ClipboardCopyIcon, Info } from "lucide-react";
 import axios from "axios";
 import { toast } from "sonner";
-import { z } from "zod";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -16,16 +15,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import requests from "@/lib/requests";
+import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+
 export default function CreateNewApiKey() {
-  const apiKey = useQuery({
+  const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],
     queryFn: async () => {
-      const { data } = await axios.get("/api/security/get-latest-active-key");
-      const parsed = z.object({ apiKey: z.string() }).parse(data);
-      if (!parsed) {
-        throw new Error("No API key found");
-      }
-      return parsed;
+      const { apiKey } = await requests.get(getLatestActiveKeySchema);
+      return apiKey;
     },
     meta: {
       errorMessage: "Failed to fetch API key",
@@ -38,7 +36,7 @@ export default function CreateNewApiKey() {
     },
     onSuccess: () => {
       toast.success("API key generated successfully");
-      apiKey.refetch();
+      apiKeyQuery.refetch();
     },
     onError: (error) => {
       console.log("Error generating API key:", error);
@@ -46,19 +44,21 @@ export default function CreateNewApiKey() {
     },
   });
 
+  const currentApiKey = apiKeyQuery.data;
+
   const generateApiKey = () => {
     generateKeyMutation.mutate();
   };
 
   const copyApiKey = () => {
-    navigator.clipboard.writeText(apiKey.data?.apiKey ?? "");
+    navigator.clipboard.writeText(currentApiKey ?? "");
     toast.success("API key copied to clipboard");
   };
 
-  const apiKeyText = apiKey.isLoading
+  const apiKeyText = apiKeyQuery.isLoading
     ? "Fetching..."
-    : apiKey.data
-      ? `${apiKey.data.apiKey.slice(0, 8)}************************`
+    : currentApiKey
+      ? `${currentApiKey.slice(0, 8)}************************`
       : "Generate a key below";
 
   return (
@@ -73,7 +73,7 @@ export default function CreateNewApiKey() {
       <CardContent className="space-y-4">
         <div className="flex items-center space-x-4">
           <div className="flex-1 bg-muted p-3 rounded-md font-mono text-sm overflow-hidden">
-            {apiKey.isLoading ? (
+            {apiKeyQuery.isLoading ? (
               <Skeleton className="h-6 w-full" />
             ) : (
               <span>{apiKeyText}</span>
@@ -83,7 +83,7 @@ export default function CreateNewApiKey() {
             variant="outline"
             size="icon"
             onClick={copyApiKey}
-            disabled={apiKey.isLoading || !apiKey.data}
+            disabled={apiKeyQuery.isLoading || !currentApiKey}
             title="Copy API key"
           >
             <ClipboardCopyIcon className="w-4 h-4" />
@@ -92,7 +92,7 @@ export default function CreateNewApiKey() {
 
         <Button
           className="w-full"
-          disabled={generateKeyMutation.isPending || apiKey.isLoading}
+          disabled={generateKeyMutation.isPending || apiKeyQuery.isLoading}
           onClick={generateApiKey}
         >
           {generateKeyMutation.isPending ? (
