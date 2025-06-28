@@ -1,7 +1,4 @@
 import Link from "next/link";
-import Stripe from "stripe";
-import { loadStripe } from "@stripe/stripe-js";
-import { toast } from "sonner";
 import { CheckCircle2 } from "lucide-react";
 
 import {
@@ -13,29 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import requests from "@/lib/requests";
-import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
 
 export default function PricingOptions() {
-  const onClickCheckout = async () => {
-    try {
-      const checkout = await requests.post(checkoutContextSchema, {
-        product: "all_access",
-      });
-      const session = checkout.session satisfies Stripe.Checkout.Session;
-      const stripe = await loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!,
-      );
-      if (!session.id || !stripe) {
-        throw new Error("Error initializing checkout session or Stripe");
-      }
-      await stripe.redirectToCheckout({ sessionId: session.id });
-    } catch (error) {
-      console.error("Checkout error:", error);
-      toast.error("Failed to initiate checkout. Please try again later.");
-    }
-  };
-
   return (
     <div className="space-y-8">
       <div className="text-center">
@@ -85,8 +61,8 @@ export default function PricingOptions() {
             </ul>
           </CardContent>
           <CardFooter>
-            <Button className="w-full" onClick={onClickCheckout}>
-              Subscribe Now
+            <Button className="w-full" asChild>
+              <Link href="/subscription">Subscribe Now</Link>
             </Button>
           </CardFooter>
         </Card>
