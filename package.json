@@ -9,7 +9,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:types": "tsc --noEmit",
-    "check": "npm run check:types && npm run check:lint && npm run check:format && npm run test",
+    "check": "npm run check:format && npm run check:types && npm run check:lint && npm run test",
     "check:lint": "next lint",
     "check:format": "prettier --check ./src",
     "format": "prettier --write ./src",
