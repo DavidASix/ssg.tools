@@ -1,9 +1,9 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { ClipboardCopyIcon, Info } from "lucide-react";
 import { toast } from "sonner";
 
+import createApiKeySchema from "@/app/api/security/create-api-key/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
 import requests from "@/lib/requests";
 
@@ -33,7 +33,7 @@ export default function CreateNewApiKey() {
 
   const generateKeyMutation = useMutation({
     mutationFn: async () => {
-      await axios.get("/api/security/create-api-key");
+      await requests.get(createApiKeySchema);
     },
     onSuccess: () => {
       toast.success("API key generated successfully");
