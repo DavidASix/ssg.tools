@@ -3,7 +3,7 @@ import { productKeys } from "@/lib/products";
 import type { APISchema } from "@/schema/types";
 
 const schema = {
-  url: "/api/purchases/checkout-context",
+  url: "/api/purchases/initialize-checkout",
   request: z.object({
     product: z.enum(productKeys),
   }),
