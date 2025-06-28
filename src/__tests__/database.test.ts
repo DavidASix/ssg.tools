@@ -1,38 +1,42 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { config } from "dotenv";
-import { sql } from "drizzle-orm";
-import { client, db } from "../schema/db";
+/**
+ * This file will remain unused until I decide that database testing is worth the CI/CD setup effort
+ */
 
-// Load environment variables from .env file
-beforeAll(() => {
-  config();
-});
+// import { describe, it, expect, beforeAll, afterAll } from "vitest";
+// import { config } from "dotenv";
+// import { sql } from "drizzle-orm";
+// import { client, db } from "../schema/db";
 
-// Ensure we close the connection after all tests
-afterAll(async () => {
-  await client.end();
-});
+// // Load environment variables from .env file
+// beforeAll(() => {
+//   config();
+// });
 
-describe("Database configuration", () => {
-  it("should have DATABASE_URL environment variable", () => {
-    expect(process.env.DATABASE_URL).toBeDefined();
-    expect(typeof process.env.DATABASE_URL).toBe("string");
-  });
+// // Ensure we close the connection after all tests
+// afterAll(async () => {
+//   await client.end();
+// });
 
-  it("should connect to the database successfully using db.ts", async () => {
-    try {
-      // Use the actual db instance from your app
-      const result = await client`SELECT 1 as test`;
+// describe("Database configuration", () => {
+//   it("should have DATABASE_URL environment variable", () => {
+//     expect(process.env.DATABASE_URL).toBeDefined();
+//     expect(typeof process.env.DATABASE_URL).toBe("string");
+//   });
 
-      expect(result).toBeDefined();
-      expect(result[0]).toEqual({ test: 1 });
+//   it("should connect to the database successfully using db.ts", async () => {
+//     try {
+//       // Use the actual db instance from your app
+//       const result = await client`SELECT 1 as test`;
 
-      // Test that the drizzle instance works too
-      const drizzleResult = await db.execute(sql`SELECT 1 as drizzle_test`);
-      expect(drizzleResult[0]).toHaveProperty("drizzle_test", 1);
-    } catch (error) {
-      console.error("Database connection error:", error);
-      expect(error).toBeUndefined();
-    }
-  });
-});
+//       expect(result).toBeDefined();
+//       expect(result[0]).toEqual({ test: 1 });
+
+//       // Test that the drizzle instance works too
+//       const drizzleResult = await db.execute(sql`SELECT 1 as drizzle_test`);
+//       expect(drizzleResult[0]).toHaveProperty("drizzle_test", 1);
+//     } catch (error) {
+//       console.error("Database connection error:", error);
+//       expect(error).toBeUndefined();
+//     }
+//   });
+// });
