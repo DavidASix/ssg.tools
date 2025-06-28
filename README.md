@@ -1,2 +1,115 @@
-# Web Dev Tools
-*The name currently sucks, I'll think of a better one someday*
+# SSG.tools
+Do you build static sites for your clients, but struggle to integrate Google Reviews into your static setup? Your solution is right here!
+
+## Type-Safe API Request Pattern
+
+This project uses a custom type-safe API request pattern that ensures both client and server are aware of expected request and response formats. The pattern leverages Zod schemas for runtime validation and TypeScript for compile-time type safety.
+
+### How It Works
+
+Each API endpoint has two key files:
+1. **Route Handler** (`/api/endpoint/route.ts`) - The server-side implementation
+2. **Schema Definition** (`/api/endpoint/schema.ts`) - Shared type definitions
+
+### Schema Structure
+
+API schemas follow the `APISchema` type defined in `src/schema/types.ts`:
+
+```typescript
+type APISchema<TRequestSchema, TResponseSchema> = {
+  url: string;               // API endpoint URL
+  request: TRequestSchema;   // Zod schema for request body
+  response: TResponseSchema; // Zod schema for response body
+};
+```
+
+### Example: GET Request
+
+**Schema** (`src/app/api/security/get-latest-active-key/schema.ts`):
+```typescript
+import { z } from "zod";
+import type { APISchema } from "@/schema/types";
+
+const schema = {
+  url: "/api/security/get-latest-active-key",
+  request: z.undefined(), // No request body for GET
+  response: z.object({
+    apiKey: z.string().nullable(),
+  }),
+} satisfies APISchema;
+
+export default schema;
+```
+
+**Client Usage**:
+```typescript
+import requests from "@/lib/requests";
+import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+
+// Type-safe GET request
+const { apiKey } = await requests.get(getLatestActiveKeySchema);
+// apiKey is typed as string | null
+```
+
+### Example: POST Request
+
+**Schema** (`src/app/api/purchases/initialize-checkout/schema.ts`):
+```typescript
+import { z } from "zod";
+import { productKeys } from "@/lib/products";
+import type { APISchema } from "@/schema/types";
+
+const schema = {
+  url: "/api/purchases/checkout-context",
+  request: z.object({
+    product: z.enum(productKeys),
+  }),
+  response: z.object({
+    session: z.any(), // Stripe session object
+  }),
+} satisfies APISchema;
+
+export default schema;
+```
+
+**Client Usage**:
+```typescript
+import requests from "@/lib/requests";
+import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
+
+// Type-safe POST request with validation
+const checkout = await requests.post(checkoutContextSchema, {
+  product: "all_access", // Validated against schema
+});
+// checkout.session is typed according to response schema
+```
+
+### Server-Side Usage
+
+Route handlers import and use the schema for validation:
+
+```typescript
+import schema from "./schema";
+
+export const POST = withAuth(
+  withBody(schema, async (_, context) => {
+    const { body } = context; // body is typed and validated
+    
+    // Process request...
+    
+    const response = schema.response.parse(result);
+    return NextResponse.json(response);
+  })
+);
+```
+
+### Benefits
+
+- **Type Safety**: Full TypeScript support from client to server
+- **Runtime Validation**: Zod schemas validate data at runtime
+- **Single Source of Truth**: Schema shared between client and server
+- **Developer Experience**: Autocomplete and compile-time error checking
+- **Maintainability**: Schema changes automatically propagate type updates
+
+> [!NOTE]
+> Yes, I'm aware of the existence of tRPC, but I figured building my own E2E type safety system would build character (and be more lightweight)
