@@ -1,6 +1,99 @@
 # SSG.tools
 Do you build static sites for your clients, but struggle to integrate Google Reviews into your static setup? Your solution is right here!
 
+## Request Middleware System
+
+This project uses a composable middleware system that allows you to easily add authentication, body parsing, and other common functionality to API routes. The middleware can be chained together in any order, providing flexibility in how you structure your endpoints.
+
+### Available Middleware
+
+#### `withAuth`
+Validates user session authentication and adds `user_id` to the context.
+
+```typescript
+import { withAuth } from "@/middleware/withAuth";
+
+export const GET = withAuth(async (_, context) => {
+  const { user_id } = context; // string - authenticated user's ID
+  // Implementation...
+});
+```
+
+#### `withApiKey`
+Validates API key authentication from the `Authorization` header and adds `user_id` to the context.
+
+```typescript
+import { withApiKey } from "@/middleware/withApiKey";
+
+export const GET = withApiKey(async (_, context) => {
+  const { user_id } = context; // string - API key owner's user ID
+  // Implementation...
+});
+```
+
+#### `withBody`
+Parses and validates request body using Zod schemas, adding the typed `body` to the context.
+
+```typescript
+import { withBody } from "@/middleware/withBody";
+import schema from "./schema";
+
+export const POST = withBody(schema, async (_, context) => {
+  const { body } = context; // Typed and validated request body
+  // Implementation...
+});
+```
+
+### Middleware Chaining
+
+Middleware can be chained together in any order, though authentication typically comes first:
+
+```typescript
+// Authentication + Body parsing
+export const POST = withAuth(
+  withBody(schema, async (_, context) => {
+    const { user_id, body } = context;
+    // Both user_id and parsed body available
+  })
+);
+
+// API Key + Body parsing
+export const POST = withApiKey(
+  withBody(schema, async (_, context) => {
+    const { user_id, body } = context;
+    // API key validation + parsed body
+  })
+);
+```
+
+### Creating Custom Middleware
+
+To create additional middleware, follow this pattern:
+
+```typescript
+type CustomContext = {
+  customData: string;
+};
+
+export function withCustom<T extends object & { customData?: never }>(
+  handler: RequestHandler<T & CustomContext>
+): RequestHandler<T> {
+  return async function (req, context: T) {
+    // Custom logic here
+    const customData = "processed data";
+    
+    const newContext = { ...context, customData };
+    return handler(req, newContext as T & CustomContext);
+  };
+}
+```
+
+The key principles:
+- Use TypeScript generics to ensure type safety
+- Spread existing context and add new properties
+- Return a function that matches the `RequestHandler` type
+- Handle errors appropriately with proper HTTP status codes
+
 ## Type-Safe API Request Pattern
 
 This project uses a custom type-safe API request pattern that ensures both client and server are aware of expected request and response formats. The pattern leverages Zod schemas for runtime validation and TypeScript for compile-time type safety.
