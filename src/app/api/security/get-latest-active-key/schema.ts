@@ -5,7 +5,7 @@ const schema = {
   url: "/api/security/get-latest-active-key",
   request: z.undefined(),
   response: z.object({
-    apiKey: z.string(),
+    apiKey: z.string().nullable(),
   }),
 } satisfies APISchema;
 
