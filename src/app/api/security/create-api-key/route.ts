@@ -21,7 +21,7 @@ export const GET: RequestHandler<NextRouteContext> = withAuth(
 
       const key = await generateApiKey(user_id);
 
-      schema.response.parse(key);
+      schema.response.parse({ key });
       return NextResponse.json({ key }, { status: 200 });
     } catch (error) {
       console.error("Error processing request:", error);
