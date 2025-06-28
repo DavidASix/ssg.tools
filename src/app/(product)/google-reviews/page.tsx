@@ -15,8 +15,9 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { z } from "zod";
+
+import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import requests from "@/lib/requests";
 import Link from "next/link";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import { toast } from "sonner";
@@ -28,9 +29,7 @@ export default function GoogleReviewPage() {
   const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],
     queryFn: async () => {
-      const { data } = await axios.get("/api/security/get-latest-active-key");
-      const parsed = z.object({ apiKey: z.string() }).parse(data);
-      return parsed;
+      return await requests.get(getLatestActiveKeySchema);
     },
     meta: {
       errorMessage: "Failed to fetch API key",
