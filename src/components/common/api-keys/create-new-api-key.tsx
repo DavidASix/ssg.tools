@@ -1,11 +1,13 @@
 "use client";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { ClipboardCopyIcon, Info } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { ClipboardCopyIcon, Info } from "lucide-react";
 import { toast } from "sonner";
-import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
-import { Skeleton } from "@/components/ui/skeleton";
+
+import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import requests from "@/lib/requests";
+
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,9 +16,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
-import requests from "@/lib/requests";
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CreateNewApiKey() {
   const apiKeyQuery = useQuery({
