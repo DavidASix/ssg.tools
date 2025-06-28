@@ -1,12 +1,5 @@
 "use client";
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import {
   CheckCircle,
   ClipboardCopy,
@@ -14,12 +7,21 @@ import {
   EyeOff,
   RefreshCw,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { z } from "zod";
 import Link from "next/link";
-import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
+import { useState } from "react";
 import { toast } from "sonner";
+
+import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import requests from "@/lib/requests";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
+import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 
 export default function GoogleReviewPage() {
   const [showApiKey, setShowApiKey] = useState(false);
@@ -28,9 +30,7 @@ export default function GoogleReviewPage() {
   const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],
     queryFn: async () => {
-      const { data } = await axios.get("/api/security/get-latest-active-key");
-      const parsed = z.object({ apiKey: z.string() }).parse(data);
-      return parsed;
+      return await requests.get(getLatestActiveKeySchema);
     },
     meta: {
       errorMessage: "Failed to fetch API key",
