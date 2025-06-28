@@ -1,12 +1,5 @@
 "use client";
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import {
   CheckCircle,
   ClipboardCopy,
@@ -14,13 +7,21 @@ import {
   EyeOff,
   RefreshCw,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
 import requests from "@/lib/requests";
-import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
-import { toast } from "sonner";
 
 export default function GoogleReviewPage() {
   const [showApiKey, setShowApiKey] = useState(false);
