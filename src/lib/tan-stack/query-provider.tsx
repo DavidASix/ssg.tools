@@ -1,9 +1,13 @@
 "use client";
 
-import { QueryClient, QueryClientProvider, QueryCache } from "@tanstack/react-query";
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { toast } from "sonner";
 import React from "react";
+import { toast } from "sonner";
 
 function createQueryClient() {
   return new QueryClient({
