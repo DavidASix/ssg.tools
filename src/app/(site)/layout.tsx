@@ -1,11 +1,22 @@
+import { redirect } from "next/navigation";
+
 import Navigation from "@/components/structure/header/navigation";
 import Footer from "@/components/structure/footer";
 
-export default function SiteLayout({
+import { auth } from "~/auth";
+
+export default async function SiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
+  if (session) {
+    console.log("Session exists, redirecting to dashboard");
+    redirect("/dashboard");
+  }
+
   return (
     <>
       <Navigation noAuth />
