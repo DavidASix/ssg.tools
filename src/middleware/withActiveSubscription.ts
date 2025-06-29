@@ -1,5 +1,5 @@
 import { subscription_payments } from "@/schema/schema";
-import { and, eq, gte, lte } from "drizzle-orm";
+import { and, eq, gte, lte, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 import { db } from "@/schema/db";
@@ -67,7 +67,7 @@ export function withActiveSubscription<
             gte(subscription_payments.subscription_end, now),
           ),
         )
-        .orderBy(subscription_payments.subscription_end) // Get the latest ending subscription
+        .orderBy(desc(subscription_payments.subscription_end))
         .limit(1);
 
       const hasActiveSubscription = !!activeSubscription;
