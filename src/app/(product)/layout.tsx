@@ -12,7 +12,6 @@ export default async function ProductLayout({
   const session = await auth();
 
   if (!session) {
-    console.log("Session does not exist, redirecting to login");
     redirect("/login");
   }
 

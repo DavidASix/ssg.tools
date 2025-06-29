@@ -20,7 +20,6 @@ export default async function SiteLayout({
   const session = await auth();
 
   if (session) {
-    console.log("Session exists, redirecting to dashboard");
     redirect("/dashboard");
   }
 
