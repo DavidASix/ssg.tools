@@ -6,7 +6,13 @@ const schema = {
   request: z.undefined(),
   response: z.object({
     hasActiveSubscription: z.boolean(),
-    subscriptionEnd: z.date().optional(),
+    // NOTE: subscriptionEnd is a date, but as it's returned from the server as serialized json,
+    // it has to be a string which conforms to datetime format.
+    subscriptionEnd: z
+      .string()
+      .datetime()
+      .transform((str) => new Date(str))
+      .optional(),
   }),
 } satisfies APISchema;
 

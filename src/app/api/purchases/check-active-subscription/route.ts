@@ -20,7 +20,7 @@ export const GET: RequestHandler<NextRouteContext> = withAuth(
 
       const response = schema.response.parse({
         hasActiveSubscription,
-        subscriptionEnd,
+        subscriptionEnd: subscriptionEnd?.toISOString(),
       });
 
       return NextResponse.json(response);
