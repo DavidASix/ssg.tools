@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+See @README.md for project overview and @package.json
+
 ## Development Commands
 
 ### Building and Testing
