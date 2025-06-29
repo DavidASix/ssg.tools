@@ -1,5 +1,6 @@
 "use client";
 
+import type { Metadata } from "next";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
@@ -10,6 +11,14 @@ import SiteLayout from "./layout";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { AuroraText } from "@/components/magicui/aurora-text";
 import PricingOptions from "@/components/common/pricing-options";
+
+const siteMetadata: Metadata = {
+  title: "Google Reviews for Developers",
+};
+
+export async function generateMetadata(): Promise<Metadata> {
+  return siteMetadata;
+}
 
 const reviews = {
   count: 65,
