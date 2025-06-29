@@ -88,13 +88,24 @@ const handleInvoicePaymentSucceeded: Handler = async ({ type, data }) => {
 
   try {
     // Find the user by their Stripe customer ID
-    const [user] = await db
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.stripe_customer_id, customerId))
-      .limit(1);
-
-    if (!user) {
+    // We retry a few times incase the checkout.session.completed event hasn't been fully processed yet.
+    // While payment_succeeded always fires after checkout.session.completed, the handler for the latter
+    // may not have completed updating the user record by the time we get here.
+    let checkCount = 0;
+    let userId: string | undefined;
+    while (checkCount < 20 && !userId) {
+      const [user] = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.stripe_customer_id, customerId))
+        .limit(1);
+      userId = user?.id;
+      checkCount++;
+      if (!userId) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+    }
+    if (!userId) {
       throw new Error(`No user found with Stripe customer ID: ${customerId}`);
     }
 
@@ -108,7 +119,7 @@ const handleInvoicePaymentSucceeded: Handler = async ({ type, data }) => {
 
     // Insert payment record into subscription_payments table
     const insertData = {
-      user_id: user.id,
+      user_id: userId,
       stripe_customer_id: customerId,
       invoice_id: invoice.id,
       amount: invoice.amount_paid,
