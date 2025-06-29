@@ -172,3 +172,25 @@ export const api_keys = pgTable("api_keys", {
   created_at: timestamp("created_at", { withTimezone: true }).defaultNow(),
   expired: boolean("expired").default(false),
 });
+
+/**
+ * PAYMENT
+ */
+export const subscription_payments = pgTable("subscription_payments", {
+  id: serial("id").primaryKey(),
+  user_id: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  stripe_customer_id: text("stripe_customer_id"),
+  invoice_id: text("invoice_id").notNull(),
+  amount: integer("amount"),
+  currency: text("currency"),
+  billing_reason: text("billing_reason"),
+  subscription_start: timestamp("subscription_start", {
+    withTimezone: true,
+  }).notNull(),
+  subscription_end: timestamp("subscription_end", {
+    withTimezone: true,
+  }).notNull(),
+  created_at: timestamp("created_at", { withTimezone: true }).notNull(),
+});
