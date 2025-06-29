@@ -16,6 +16,7 @@ services:
     command: npm run dev
     ports:
       - "3000:3000"
+    user: "${UID:-1000}:${GID:-1000}"
     environment:
       - NODE_ENV=development
       - DATABASE_URL=postgres://postgres:postgres@db:5432/web-dev-tools
@@ -26,6 +27,5 @@ services:
       - RAPID_KEY=${RAPID_KEY}
     volumes:
       - .:/app  # Mount current directory to /app in container
-      - /app/.next  # Don't mount .next
     depends_on:
       - db
