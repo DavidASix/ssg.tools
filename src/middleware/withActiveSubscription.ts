@@ -22,6 +22,20 @@ type ActiveSubscriptionContext = {
  * date falls between subscription_start and subscription_end (inclusive).
  *
  * @example
+ * ```typescript
+ * export const GET: RequestHandler<NextRouteContext> = withActiveSubscription(
+ *   async (_, context) => {
+ *     const { hasActiveSubscription, subscriptionEnd } = context.subscription;
+ *     if (!hasActiveSubscription) {
+ *       return NextResponse.json({ error: "Active subscription required" }, { status: 403 });
+ *     }
+ *     return NextResponse.json({ 
+ *       message: "Access granted!",
+ *       expiresAt: subscriptionEnd 
+ *     });
+ *   }
+ * );
+ * ```
  */
 export function withActiveSubscription<
   T extends object & {
