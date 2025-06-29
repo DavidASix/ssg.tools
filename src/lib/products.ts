@@ -19,7 +19,10 @@ export const products: Record<string, Product> = {
     id: "prod_SLGiKkhJQ7qFox",
     name: "All Access",
     description: "Access to all features",
-    price_id: "price_1RQZKfAY1r2O5Na5LVmPxVI6",
+    price_id:
+      process.env.NODE_ENV === "development"
+        ? "price_1RQaBMAY1r2O5Na5Kfg5joLI"
+        : "price_1RQZKfAY1r2O5Na5LVmPxVI6",
     type: "subscription",
   },
   ai_credit: {

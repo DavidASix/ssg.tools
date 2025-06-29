@@ -25,8 +25,8 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       const product = products[body.product];
 
       const params: Stripe.Checkout.SessionCreateParams = {
-        success_url: `${DOMAIN}/purchases/success?product=${body.product}&session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${DOMAIN}/purchases/failure?product=${body.product}&session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${DOMAIN}/subscription/?status=success&product=${body.product}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${DOMAIN}/subscription/?status=fail&product=${body.product}&session_id={CHECKOUT_SESSION_ID}`,
         payment_method_types: ["card"],
         mode: "subscription",
         line_items: [
