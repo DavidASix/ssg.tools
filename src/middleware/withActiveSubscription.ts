@@ -29,9 +29,9 @@ type ActiveSubscriptionContext = {
  *     if (!hasActiveSubscription) {
  *       return NextResponse.json({ error: "Active subscription required" }, { status: 403 });
  *     }
- *     return NextResponse.json({ 
+ *     return NextResponse.json({
  *       message: "Access granted!",
- *       expiresAt: subscriptionEnd 
+ *       expiresAt: subscriptionEnd
  *     });
  *   }
  * );
