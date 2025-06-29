@@ -1,24 +1,14 @@
 "use client";
 
-import type { Metadata } from "next";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Star } from "lucide-react";
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
-import SiteLayout from "./layout";
 import { ShimmerButton } from "@/components/magicui/shimmer-button";
 import { AuroraText } from "@/components/magicui/aurora-text";
 import PricingOptions from "@/components/common/pricing-options";
-
-const siteMetadata: Metadata = {
-  title: "Google Reviews for Developers",
-};
-
-export async function generateMetadata(): Promise<Metadata> {
-  return siteMetadata;
-}
 
 const reviews = {
   count: 65,
@@ -49,7 +39,7 @@ const reviews = {
 export default function Home() {
   const router = useRouter();
   return (
-    <SiteLayout>
+    <>
       <section className="section section-padding grow flex min-h-[60vh]">
         <div className="content text-center flex flex-col justify-center items-center">
           <div className="mx-auto flex max-w-screen-lg flex-col gap-6">
@@ -99,6 +89,6 @@ export default function Home() {
           <PricingOptions />
         </div>
       </section>
-    </SiteLayout>
+    </>
   );
 }
