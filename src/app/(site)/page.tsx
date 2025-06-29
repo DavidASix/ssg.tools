@@ -317,24 +317,37 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-20 bg-primary">
         <div className="content text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">
-            Build Smarter and Faster, Not Harder
-          </h2>
-          <ShimmerButton
-            className="h-12 px-8 bg-white text-primary hover:bg-white/90 mt-8"
-            shimmerSize="0.15em"
-            onClick={() => router.push("/login")}
-          >
-            ✨ Get Started
-          </ShimmerButton>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Ready to Stop Fighting Google&apos;s API?
+            </h2>
+            <p className="text-xl text-white/90 mb-8 leading-relaxed">
+              Join the developers who&apos;ve already simplified their review
+              integration process. Start building faster with fresh Google
+              Reviews in your static sites.
+            </p>
+            <div className="py-10">
+              <PricingOptions />
+            </div>
+            <div className="flex flex-col gap-4 justify-center items-center">
+              <ShimmerButton
+                className="h-14 px-10 text-lg"
+                shimmerSize="0.15em"
+                onClick={() => router.push("/login")}
+              >
+                ✨ Get Started Today
+              </ShimmerButton>
+              <p className="text-white/70 text-sm">
+                Credit card required, billed through Stripe
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Pricing Section */}
+      {/* About The Developer Section */}
       <section className="py-20 bg-gray-50">
-        <div className="content">
-          <PricingOptions />
-        </div>
+        <div className="content">About the developer</div>
       </section>
     </>
   );
