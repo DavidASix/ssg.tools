@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Star, Code, Users, Globe } from "lucide-react";
 
@@ -346,8 +347,69 @@ export default function Home() {
       </section>
 
       {/* About The Developer Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="content">About the developer</div>
+      <section className="section section-padding bg-gray-50">
+        <div className="content">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              About the Developer
+            </h2>
+            <p className="text-xl text-gray-600">
+              Created by RedOxfordOnline in Waterloo Ontario
+            </p>
+          </div>
+
+          <div className="flex flex-col md:flex-row items-center gap-12">
+            <div className="text-center md:text-left min-w-fit space-y-4">
+              <Image
+                src="/headshot_small.webp"
+                alt="David Anderson Six, Founder of Red Oxford Online"
+                width={192}
+                height={192}
+                className="w-48 h-48 rounded-full mx-auto md:mx-0  shadow-lg"
+              />
+              <div className="text-center md:text-left space-y-2">
+                <h3 className="text-2xl font-bold text-gray-900">
+                  David Anderson Six
+                </h3>
+                <p className="text-lg text-primary font-semibold">
+                  Founder & Lead Developer
+                </p>
+                <p className="text-gray-600">
+                  Red Oxford Online • Waterloo, Ontario
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-6 col-span-2">
+              <div>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  Run by its founder David Anderson,{" "}
+                  <strong>Red Oxford Online</strong> is a small but powerful
+                  company, passionate about bringing your business to the next
+                  level with easy to use tools.
+                </p>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                  David is a full-stack developer with nearly a decade of
+                  programming & server management experience, specializing in
+                  creating websites, mobile & web applications, data pipelines,
+                  and server infrastructure.
+                </p>
+                <p className="text-gray-700 leading-relaxed">
+                  I think that one of the greatest joys in life is building
+                  something that makes people&apos;s lives better. SSG.tools
+                  represents exactly that - solving a real problem that
+                  developers face every day.
+                </p>
+              </div>
+
+              <div className="border-l-4 border-primary pl-6">
+                <p className="text-gray-600 italic">
+                  Proudly developing in Waterloo, Ontario 🇨🇦
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </>
   );
