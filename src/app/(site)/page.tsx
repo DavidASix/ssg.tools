@@ -38,6 +38,13 @@ const reviews = {
   ],
 };
 
+const frameworks = [
+  { name: "Gatsby" },
+  { name: "Hugo" },
+  { name: "Jekyll" },
+  { name: "11ty" },
+];
+
 const steps = [
   {
     step: "01",
@@ -180,18 +187,14 @@ export default function Home() {
 
           {/* Company/Framework Logos */}
           <div className="flex flex-wrap gap-8 items-center justify-around opacity-60">
-            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
-              Gatsby
-            </div>
-            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
-              Hugo
-            </div>
-            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
-              Jekyll
-            </div>
-            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
-              11ty
-            </div>
+            {frameworks.map((fw) => (
+              <div
+                key={fw.name}
+                className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80"
+              >
+                {fw.name}
+              </div>
+            ))}
           </div>
         </div>
       </section>
