@@ -62,7 +62,7 @@ export default function Home() {
   return (
     <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-20 lg:py-32">
+      <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
         <div className="content text-center">
           <div className="mx-auto max-w-4xl">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-6xl mb-6">
@@ -154,7 +154,7 @@ export default function Home() {
       </section>
 
       {/* Social Proof Section */}
-      <section className="py-16 bg-white">
+      <section className="section section-padding bg-white">
         <div className="content text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-8">
             Loved by Over {devCount} Developers Worldwide
@@ -204,7 +204,7 @@ export default function Home() {
       </section>
 
       {/* User Personas Section */}
-      <section className="py-20 bg-blue-50">
+      <section className="section section-padding bg-blue-50">
         <div className="content">
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="p-8 text-center bg-white">
@@ -247,7 +247,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-20 bg-white">
+      <section className="section section-padding bg-white">
         <div className="content">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
@@ -316,7 +316,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-primary">
+      <section className="section section-padding bg-primary">
         <div className="content text-center">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
