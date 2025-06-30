@@ -71,7 +71,7 @@ export default function Home() {
               <span className="text-primary">Google Reviews</span> Assistant
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Integrate fresh Google Reviews into Gatsby, Next.js, Hugo, or any
+              Integrate fresh Google Reviews into Gatsby, Eleventy, Hugo, or any
               static site generator. Instantly create review displays and boost
               your client&apos;s credibility by 10x.
             </p>
@@ -79,16 +79,12 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <ShimmerButton
-              className="h-12 px-8 bg-primary text-white hover:bg-primary/90"
+              className="h-12 px-12"
               shimmerSize="0.15em"
               onClick={() => router.push("/login")}
             >
-              ✨ Try Free Now
+              ✨ Get Started Today
             </ShimmerButton>
-            <button className="h-12 px-8 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center justify-center gap-2">
-              <Globe className="w-4 h-4" />
-              Add to Chrome - Free
-            </button>
           </div>
 
           {/* Product Screenshot */}
@@ -183,21 +179,18 @@ export default function Home() {
           </div>
 
           {/* Company/Framework Logos */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 items-center opacity-60">
-            <div className="text-center">
-              <div className="font-bold text-lg text-gray-800">Gatsby</div>
+          <div className="flex flex-wrap gap-8 items-center justify-around opacity-60">
+            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
+              Gatsby
             </div>
-            <div className="text-center">
-              <div className="font-bold text-lg text-gray-800">Next.js</div>
+            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
+              Hugo
             </div>
-            <div className="text-center">
-              <div className="font-bold text-lg text-gray-800">Hugo</div>
+            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
+              Jekyll
             </div>
-            <div className="text-center">
-              <div className="font-bold text-lg text-gray-800">Jekyll</div>
-            </div>
-            <div className="text-center">
-              <div className="font-bold text-lg text-gray-800">11ty</div>
+            <div className="font-bold text-lg text-gray-800 flex-1 min-w-40 md:min-w-80">
+              11ty
             </div>
           </div>
         </div>
@@ -276,7 +269,7 @@ export default function Home() {
           </div>
 
           {/* Code Example */}
-          <div className="mt-16 text-center">
+          <div className="mt-16 text-center overflow-hidden">
             <div className="bg-gray-900 rounded-2xl p-8 max-w-3xl mx-auto">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-3 h-3 bg-red-400 rounded-full"></div>
