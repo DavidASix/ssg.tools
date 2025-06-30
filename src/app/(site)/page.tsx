@@ -71,16 +71,14 @@ export default function Home() {
       {/* Hero Section */}
       <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
         <div className="content text-center">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-full">
             <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-6xl mb-6">
-              Your All-in-One
-              <br />
-              <span className="text-primary">Google Reviews</span> Assistant
+              Fetch your <span className="text-primary">Google Reviews</span> at
+              build time
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
-              Integrate fresh Google Reviews into Gatsby, Eleventy, Hugo, or any
-              static site generator. Instantly create review displays and boost
-              your client&apos;s credibility by 10x.
+              Embed fresh Google Reviews in Gatsby, Eleventy, Hugo, or any
+              static site. Purely static—<b>no JavaScript required</b>.
             </p>
           </div>
 
