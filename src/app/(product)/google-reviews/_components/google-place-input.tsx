@@ -71,6 +71,7 @@ export default function GooglePlaceInput({
     };
 
     const selectEventHandler = (event: Event) => {
+      console.log("Place selected:");
       handlePlaceSelect(event as GMPSelectEvent);
     };
 
@@ -90,9 +91,28 @@ export default function GooglePlaceInput({
     autocompleteElement.addEventListener("gmp-select", selectEventHandler);
     autocompleteElement.addEventListener("input", inputEventHandler);
 
+    // Since we can't access shadow DOM, assume any click while place is selected clears it
+    const clickHandler = () => {
+      if (selectedPlaceId) {
+        // Small delay to let any internal clear logic execute first
+        setTimeout(() => {
+          setSelectedPlaceId(null);
+          onPlaceSelect?.("", {
+            place_id: "",
+            name: undefined,
+            formatted_address: undefined,
+            geometry: undefined,
+          });
+        }, 100);
+      }
+    };
+
+    autocompleteElement.addEventListener("click", clickHandler);
+
     return () => {
       autocompleteElement.removeEventListener("gmp-select", selectEventHandler);
       autocompleteElement.removeEventListener("input", inputEventHandler);
+      autocompleteElement.removeEventListener("click", clickHandler);
     };
   }, [onPlaceSelect, selectedPlaceId]);
 
