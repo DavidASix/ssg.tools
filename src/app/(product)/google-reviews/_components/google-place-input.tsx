@@ -29,6 +29,7 @@ export default function GooglePlaceInput({
 }: GooglePlaceInputProps) {
   const autocompleteRef = useRef<HTMLElement | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
 
   useEffect(() => {
     const autocompleteElement = autocompleteRef.current;
@@ -50,6 +51,8 @@ export default function GooglePlaceInput({
       const location = place.location;
 
       if (placeId) {
+        setSelectedPlaceId(placeId);
+
         // Create a proper PlaceResult for compatibility
         const legacyPlaceResult: google.maps.places.PlaceResult = {
           place_id: placeId,
@@ -67,16 +70,31 @@ export default function GooglePlaceInput({
       }
     };
 
-    const eventHandler = (event: Event) => {
+    const selectEventHandler = (event: Event) => {
       handlePlaceSelect(event as GMPSelectEvent);
     };
 
-    autocompleteElement.addEventListener("gmp-select", eventHandler);
+    const inputEventHandler = () => {
+      // If a place is currently selected and user starts typing, clear the selection
+      if (selectedPlaceId) {
+        setSelectedPlaceId(null);
+        onPlaceSelect?.("", {
+          place_id: "",
+          name: undefined,
+          formatted_address: undefined,
+          geometry: undefined,
+        });
+      }
+    };
+
+    autocompleteElement.addEventListener("gmp-select", selectEventHandler);
+    autocompleteElement.addEventListener("input", inputEventHandler);
 
     return () => {
-      autocompleteElement.removeEventListener("gmp-select", eventHandler);
+      autocompleteElement.removeEventListener("gmp-select", selectEventHandler);
+      autocompleteElement.removeEventListener("input", inputEventHandler);
     };
-  }, [onPlaceSelect]);
+  }, [onPlaceSelect, selectedPlaceId]);
 
   return (
     <>
