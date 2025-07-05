@@ -22,9 +22,18 @@ interface GooglePlaceInputProps {
   className?: string;
 }
 
+/**
+ * GooglePlaceInput component provides a Google Maps Places Autocomplete input.
+ *
+ * @requires NEXT_PUBLIC_GOOGLE_MAPS_API_KEY to be set in environment variables.
+ *
+ * The internal gmp-place-autocomplete component implements a shadow DOM structure, which is not accessible directly.
+ * This means we cannot directly access things like the input element or the clear button element. Apparently you can
+ * partially open the shadow DOM but I haven't bothered with that yet:
+ * Hack to open the shadow-root -> https://stackoverflow.com/questions/79556333/how-to-style-google-maps-placeautocompleteelement-to-match-existing-form-inputs
+ */
 export default function GooglePlaceInput({
   onPlaceSelect,
-  placeholder = "Search for a place...",
   className,
 }: GooglePlaceInputProps) {
   const autocompleteRef = useRef<HTMLElement | null>(null);
@@ -35,6 +44,13 @@ export default function GooglePlaceInput({
     const autocompleteElement = autocompleteRef.current;
     if (!autocompleteElement) return;
 
+    /**
+     * Callback to handle a place being selected from the autocomplete input.
+     * The function parses out the place information from the Google selection event, sets the place ID
+     * to state, and calls the onPlaceSelect callback with the place ID and a legacy PlaceResult object.
+     *
+     * @param event GMPSelectEvent
+     */
     const handlePlaceSelect = async (event: GMPSelectEvent) => {
       const { placePrediction } = event;
 
@@ -71,28 +87,16 @@ export default function GooglePlaceInput({
     };
 
     const selectEventHandler = (event: Event) => {
-      console.log("Place selected:");
       handlePlaceSelect(event as GMPSelectEvent);
     };
 
-    const inputEventHandler = () => {
+    /**
+     * Clear the selected place ID when the user starts typing in the input or clicks the input.
+     * This is necessary because the gmp-place-autocomplete component does not provide a direct way to access
+     * the input element or the clear button element.
+     */
+    const clearEventHandler = () => {
       // If a place is currently selected and user starts typing, clear the selection
-      if (selectedPlaceId) {
-        setSelectedPlaceId(null);
-        onPlaceSelect?.("", {
-          place_id: "",
-          name: undefined,
-          formatted_address: undefined,
-          geometry: undefined,
-        });
-      }
-    };
-
-    autocompleteElement.addEventListener("gmp-select", selectEventHandler);
-    autocompleteElement.addEventListener("input", inputEventHandler);
-
-    // Since we can't access shadow DOM, assume any click while place is selected clears it
-    const clickHandler = () => {
       if (selectedPlaceId) {
         // Small delay to let any internal clear logic execute first
         setTimeout(() => {
@@ -107,12 +111,15 @@ export default function GooglePlaceInput({
       }
     };
 
-    autocompleteElement.addEventListener("click", clickHandler);
+    autocompleteElement.addEventListener("gmp-select", selectEventHandler);
+    autocompleteElement.addEventListener("input", clearEventHandler);
+    // Since we can't access shadow DOM, assume any click while place is selected clears it
+    autocompleteElement.addEventListener("click", clearEventHandler);
 
     return () => {
       autocompleteElement.removeEventListener("gmp-select", selectEventHandler);
-      autocompleteElement.removeEventListener("input", inputEventHandler);
-      autocompleteElement.removeEventListener("click", clickHandler);
+      autocompleteElement.removeEventListener("input", clearEventHandler);
+      autocompleteElement.removeEventListener("click", clearEventHandler);
     };
   }, [onPlaceSelect, selectedPlaceId]);
 
@@ -127,7 +134,6 @@ export default function GooglePlaceInput({
         ref: (node: HTMLElement | null) => {
           autocompleteRef.current = node;
         },
-        placeholder: placeholder,
         className: cn("w-full bg-white border rounded-lg", className),
         style: { display: isLoaded ? "block" : "none" },
       })}
