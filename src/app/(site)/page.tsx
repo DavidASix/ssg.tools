@@ -71,18 +71,17 @@ export default function Home() {
       {/* Hero Section */}
       <section className="section section-padding bg-gradient-to-b from-blue-50 to-white">
         <div className="content text-center">
-          <div className="mx-auto max-w-full">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-6xl mb-6">
+          <div className="mx-auto max-w-full pt-12 pb-20 flex justify-center items-center flex-col gap-6">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 lg:text-6xl">
               Fetch your <span className="text-primary">Google Reviews</span> at
               build time
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
               Embed fresh Google Reviews in Gatsby, Eleventy, Hugo, or any
-              static site. Purely static—<b>no JavaScript required</b>.
+              static site. <br />
+              Purely static—<b>no JavaScript required</b>.
             </p>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <ShimmerButton
               className="h-12 px-12"
               shimmerSize="0.15em"
