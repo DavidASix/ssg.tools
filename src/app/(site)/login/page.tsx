@@ -26,11 +26,16 @@ export default function Home() {
       }
       const method =
         process.env.NODE_ENV === "development" ? "email" : "resend";
-      await signIn(method, {
+      const signInAttempt = await signIn(method, {
         email,
         redirect: false,
         redirectTo: "/",
       });
+
+      if (!signInAttempt?.ok || !signInAttempt) {
+        throw new Error(signInAttempt?.error || "Failed to sign in");
+      }
+
       toast.success("Check your email for a sign in link");
     } catch (error) {
       const message =
