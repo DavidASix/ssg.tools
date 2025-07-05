@@ -1,5 +1,5 @@
 {
-  "name": "web-dev-tools",
+  "name": "ssg.tools",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:types": "tsc --noEmit",
-    "check": "npm run check:format && npm run check:types && npm run check:lint && npm run test",
+    "check:build": "next build",
+    "check": "npm run check:format && npm run check:types && npm run check:lint && npm run test && npm run check:build",
     "check:lint": "next lint",
     "check:format": "prettier --check ./src",
     "format": "prettier --write ./src",
