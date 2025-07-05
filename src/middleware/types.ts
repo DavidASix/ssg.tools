@@ -6,7 +6,7 @@ import type { NextRequest } from "next/server";
  * is built on top of this interface, adding params based on which middleware is used.
  */
 export interface NextRouteContext {
-  params?: Record<string, string | string[] | undefined>;
+  params: Promise<Record<string, string | string[] | undefined>>;
 }
 
 /**
