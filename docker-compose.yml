@@ -2,16 +2,16 @@ services:
   db:
     image: postgres:16-alpine
     ports:
-      - "5433:5432"  # Changed from 5432:5432 to avoid port conflict
+      - "5433:5432" # Changed from 5432:5432 to avoid port conflict
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=web-dev-tools
     volumes:
-      - ./.database:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     restart: always
   app:
-    build: 
+    build:
       context: .
     command: npm run dev
     ports:
@@ -26,6 +26,8 @@ services:
       - MAILER_ADDRESS=${MAILER_ADDRESS}
       - RAPID_KEY=${RAPID_KEY}
     volumes:
-      - .:/app  # Mount current directory to /app in container
+      - .:/app # Mount current directory to /app in container
     depends_on:
       - db
+volumes:
+  db_data:

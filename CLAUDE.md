@@ -68,7 +68,7 @@ Uses Drizzle ORM with PostgreSQL. A full table structure can be found in `src/sc
 - **Development**: Uses console logging for magic links instead of email sending
 
 ### Styling Conventions
-Pages should use semantic `<section>` blocks with consistent layout:
+Pages must use semantic `<section>` blocks with consistent layout:
 ```html
 <section className="section section-padding">
     <div className="content">
@@ -76,7 +76,8 @@ Pages should use semantic `<section>` blocks with consistent layout:
     </div>
 </section>
 ```
-The inner div can use `content` or `content-wide` classes.
+- When using a section tag you MUST apply section and section-padding first before other styles. These take care of the padding and spacing.
+- When placing a div inside a section tag it MUST have either `content` or `content-wide` class as this takes care of the maximum width.
 
 ## Type-Safe API Request Pattern
 
@@ -159,6 +160,9 @@ const result = await requests.post(endpointSchema, requestBody);
 - **Avoid `as Type`** - also indicates wrong approach
 
 ## Tools
+
+### ShadCN
+If you are creating a new ShadCN component you MUST install it with an `npx` command (like `npx shadcn@latest add badge`). You should NEVER write a ShadCN component from scratch, it should ALWAYS be installed.
 
 ### Git
 
