@@ -17,6 +17,62 @@ import requests from "@/lib/requests";
 
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+interface RegenerateKeyDialogProps {
+  children: React.ReactNode;
+  onConfirm: () => void;
+  isLoading?: boolean;
+}
+
+function RegenerateKeyDialog({
+  children,
+  onConfirm,
+  isLoading = false,
+}: RegenerateKeyDialogProps) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Regenerate API Key</AlertDialogTitle>
+          <AlertDialogDescription>
+            This action will invalidate your current API key and generate a new
+            one. All existing implementations using the old key will immediately
+            stop working.
+            <br />
+            <br />
+            You should only do this if your current API key has been compromised
+            or you suspect it has been exposed.
+            <br />
+            <br />
+            Are you sure you want to continue?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            disabled={isLoading}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            Yes, Regenerate Key
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
 
 interface CreateNewApiKeyProps {
   showDetails?: boolean;
@@ -137,25 +193,29 @@ export default function CreateNewApiKey({
               <ClipboardCopyIcon className="w-4 h-4" />
               <span>Copy</span>
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={generateApiKey}
-              disabled={generateKeyMutation.isPending}
-              className="flex items-center space-x-1"
+            <RegenerateKeyDialog
+              onConfirm={generateApiKey}
+              isLoading={generateKeyMutation.isPending}
             >
-              {generateKeyMutation.isPending ? (
-                <>
-                  <LoadingSpinner size={16} />
-                  <span>Generating...</span>
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="w-4 h-4" />
-                  <span>Regenerate</span>
-                </>
-              )}
-            </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={generateKeyMutation.isPending}
+                className="flex items-center space-x-1"
+              >
+                {generateKeyMutation.isPending ? (
+                  <>
+                    <LoadingSpinner size={16} />
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4" />
+                    <span>Regenerate</span>
+                  </>
+                )}
+              </Button>
+            </RegenerateKeyDialog>
           </div>
         </div>
       ) : (
