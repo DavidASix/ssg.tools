@@ -43,6 +43,8 @@ export default function GooglePlaceInput({
     const autocompleteElement = autocompleteRef.current;
     if (!autocompleteElement) return;
 
+    let timeoutId: NodeJS.Timeout | null = null;
+
     /**
      * Callback to handle a place being selected from the autocomplete input.
      * The function parses out the place information from the Google selection event, sets the place ID
@@ -68,7 +70,7 @@ export default function GooglePlaceInput({
       if (placeId) {
         setSelectedPlaceId(placeId);
 
-        // Create a proper PlaceResult for compatibility
+        // Create a proper PlaceResult
         const legacyPlaceResult: google.maps.places.PlaceResult = {
           place_id: placeId,
           name: displayName || undefined,
@@ -80,7 +82,6 @@ export default function GooglePlaceInput({
             : undefined,
         };
 
-        // Call the onPlaceSelect callback if provided
         onPlaceSelect?.(placeId, legacyPlaceResult);
       }
     };
@@ -95,10 +96,9 @@ export default function GooglePlaceInput({
      * the input element or the clear button element.
      */
     const clearEventHandler = () => {
-      // If a place is currently selected and user starts typing, clear the selection
       if (selectedPlaceId) {
         // Small delay to let any internal clear logic execute first
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           setSelectedPlaceId(null);
           onPlaceSelect?.("", {
             place_id: "",
@@ -119,6 +119,9 @@ export default function GooglePlaceInput({
       autocompleteElement.removeEventListener("gmp-select", selectEventHandler);
       autocompleteElement.removeEventListener("input", clearEventHandler);
       autocompleteElement.removeEventListener("click", clearEventHandler);
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
   }, [onPlaceSelect, selectedPlaceId]);
 
