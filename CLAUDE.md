@@ -159,6 +159,10 @@ const result = await requests.post(endpointSchema, requestBody);
 - **Avoid `as unknown as Type`** - indicates wrong approach
 - **Avoid `as Type`** - also indicates wrong approach
 
+### Strings
+When writing site contents, respect eslintreact/no-unescaped-entities. This is a requirement. Escape chars like &apos; should be used instead of `'`.
+
+
 ## Tools
 
 ### ShadCN
