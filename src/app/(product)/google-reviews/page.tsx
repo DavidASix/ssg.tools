@@ -1,19 +1,21 @@
 "use client";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+
+import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
+import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import requests from "@/lib/requests";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
-import requests from "@/lib/requests";
-import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
 
+import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 import GooglePlaceInput from "./_components/google-place-input";
 import { ReviewCard } from "./_components/review-card";
 import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";
-import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 interface Review {
   author_name: string | null;
@@ -48,6 +50,17 @@ export default function GoogleReviewPage() {
   );
   const [currentStep, setCurrentStep] = useState(1);
 
+  const apiKeyQuery = useQuery({
+    queryKey: ["apiKey"],
+    queryFn: async () => {
+      const { apiKey } = await requests.get(getLatestActiveKeySchema);
+      return apiKey;
+    },
+    meta: {
+      errorMessage: "Failed to fetch API key",
+    },
+  });
+
   const fetchReviewsMutation = useMutation({
     mutationFn: async (data: {
       place_id: string;
@@ -59,12 +72,22 @@ export default function GoogleReviewPage() {
     onSuccess: (data) => {
       setReviews(data.reviews);
       setBusinessStats(data.stats);
-      setCurrentStep(3);
+      setCurrentStep(apiKeyQuery.data ? 4 : 3);
     },
     meta: {
       errorMessage: "Failed to fetch reviews",
     },
   });
+
+  const onPlaceSelect = (
+    selectedPlaceId: string,
+    placeData: { name?: string; formatted_address?: string },
+  ) => {
+    setPlaceId(selectedPlaceId);
+    setPlaceName(placeData.name ?? null);
+    setPlaceAddress(placeData.formatted_address ?? null);
+    setCurrentStep(2);
+  };
 
   const fetchReviews = () => {
     if (!placeId) return;
@@ -130,14 +153,7 @@ export default function GoogleReviewPage() {
                     Enter your business name as it appears on Google Maps
                   </label>
                 </div>
-                <GooglePlaceInput
-                  onPlaceSelect={(selectedPlaceId, placeData) => {
-                    setPlaceId(selectedPlaceId);
-                    setPlaceName(placeData.name ?? null);
-                    setPlaceAddress(placeData.formatted_address ?? null);
-                    setCurrentStep(2);
-                  }}
-                />
+                <GooglePlaceInput onPlaceSelect={onPlaceSelect} />
                 {placeId && (
                   <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
                     <p className="text-sm text-green-800">
@@ -185,19 +201,19 @@ export default function GoogleReviewPage() {
                     {reviews.length > 0 && (
                       <>
                         <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                          <p className="text-sm text-green-800 font-medium">
-                            ✓ Found {reviews.length} reviews
-                          </p>
                           {businessStats && (
                             <div className="mt-2 text-sm text-green-700">
+                              <p>Total Reviews: {businessStats.review_count}</p>
                               <p>
                                 Average Rating: {businessStats.review_score}/5
                               </p>
-                              <p>Total Reviews: {businessStats.review_count}</p>
                             </div>
                           )}
                         </div>
-                        {reviews.map((review, index) => (
+                        <p className="text-sm font-semibold text-gray-800">
+                          {Math.min(reviews.length, 5)} recent reviews:
+                        </p>
+                        {reviews.slice(0, 5).map((review, index) => (
                           <ReviewCard
                             key={index}
                             author={review.author_name || "Anonymous"}
@@ -219,7 +235,10 @@ export default function GoogleReviewPage() {
                 description="Create a secure API key to access your reviews programmatically"
                 status={getStepStatus(3)}
               >
-                <CreateNewApiKey showDetails={false} />
+                <CreateNewApiKey
+                  showDetails={false}
+                  onKeyGenerated={() => setCurrentStep(4)}
+                />
               </WizardStep>
 
               {/* Step 4: Display Reviews */}
