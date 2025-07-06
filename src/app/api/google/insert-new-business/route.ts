@@ -45,7 +45,10 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
 
       const response = schema.response.parse({
         business_id: business.id,
-        reviews: insertedReviews,
+        reviews: insertedReviews.map((review) => ({
+          ...review,
+          datetime: review.datetime.toISOString(),
+        })),
         stats: insertedStats,
       });
 
