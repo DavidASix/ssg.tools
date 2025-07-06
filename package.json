@@ -9,6 +9,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "stripe:listen": "stripe listen --forward-to localhost:3000/api/purchases/webhook",
     "test": "vitest run",
     "test:watch": "vitest",
     "check:types": "tsc --noEmit",
