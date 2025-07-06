@@ -148,10 +148,12 @@ const BusinessSchema = z.object({
   posts_sample: z.any().nullable(),
   posts_link: z.string().nullable(),
   reviews_sample: z.array(ReviewSchema.partial()).nullish(),
-  located_in: z.object({
-    google_id: z.string(),
-    name: z.string(),
-  }),
+  located_in: z
+    .object({
+      google_id: z.string(),
+      name: z.string(),
+    })
+    .optional(),
   emails_and_contacts: z.object({
     emails: z.array(z.string()).nullable(),
     phone_numbers: z.array(z.string()).nullable(),
