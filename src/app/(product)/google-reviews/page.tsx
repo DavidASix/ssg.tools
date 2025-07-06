@@ -1,19 +1,7 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import {
-  CheckCircle,
-  ClipboardCopy,
-  Eye,
-  EyeOff,
-  RefreshCw,
-} from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
-import { toast } from "sonner";
 
-import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
-import requests from "@/lib/requests";
-
+import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
 import { CodeBlock } from "@/components/ui/code-block";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
@@ -56,14 +44,11 @@ export const mockReviews: Review[] = [
   },
 ];
 
-const generateCodeSnippet = (
-  placeId: string | null,
-  apiKey: string | null,
-): string => {
+const generateCodeSnippet = (placeId: string | null): string => {
   return `// Fetch your Google Reviews at build time
 const response = await fetch('https://api.ssg.tools/reviews/${placeId || "YOUR_PLACE_ID"}', {
   headers: {
-    'Authorization': 'Bearer ${apiKey || "YOUR_API_KEY"}',
+    'Authorization': 'Bearer YOUR_API_KEY',
   }
 });
 
@@ -83,35 +68,10 @@ const STEPS = [
 ];
 
 export default function GoogleReviewPage() {
-  const [showApiKey, setShowApiKey] = useState(false);
   const [placeId, setPlaceId] = useState<string | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-
-  // Query to check if API key exists
-  const apiKeyQuery = useQuery({
-    queryKey: ["apiKey"],
-    queryFn: async () => {
-      return await requests.get(getLatestActiveKeySchema);
-    },
-    meta: {
-      errorMessage: "Failed to fetch API key",
-    },
-  });
-
-  const hasApiKey = !apiKeyQuery.isLoading && apiKeyQuery.data?.apiKey;
-
-  const copyApiKey = () => {
-    if (apiKeyQuery.data?.apiKey) {
-      navigator.clipboard.writeText(apiKeyQuery.data.apiKey);
-      toast.success("API key copied to clipboard");
-    }
-  };
-
-  const toggleApiKeyVisibility = () => {
-    setShowApiKey(!showApiKey);
-  };
 
   const fetchReviews = async () => {
     if (!placeId) return;
@@ -260,79 +220,7 @@ export default function GoogleReviewPage() {
                 description="Create a secure API key to access your reviews programmatically"
                 status={getStepStatus(3)}
               >
-                {apiKeyQuery.isLoading ? (
-                  <div className="flex items-center space-x-2 justify-center py-8">
-                    <LoadingSpinner size={16} />
-                    <span>Checking API key status...</span>
-                  </div>
-                ) : hasApiKey ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2 text-green-800 font-medium">
-                      <CheckCircle className="w-5 h-5" />
-                      <span>API key is active and ready to use</span>
-                    </div>
-
-                    <div className="bg-white border border-green-200 p-4 rounded-lg">
-                      <div className="font-mono text-sm break-all">
-                        {apiKeyQuery.data?.apiKey
-                          ? showApiKey
-                            ? apiKeyQuery.data.apiKey
-                            : `${apiKeyQuery.data.apiKey.slice(0, 12)}${"•".repeat(20)}`
-                          : ""}
-                      </div>
-                    </div>
-
-                    <div className="flex space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={toggleApiKeyVisibility}
-                        className="flex items-center space-x-1"
-                      >
-                        {showApiKey ? (
-                          <>
-                            <EyeOff className="w-4 h-4" />
-                            <span>Hide</span>
-                          </>
-                        ) : (
-                          <>
-                            <Eye className="w-4 h-4" />
-                            <span>Show</span>
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={copyApiKey}
-                        className="flex items-center space-x-1"
-                      >
-                        <ClipboardCopy className="w-4 h-4" />
-                        <span>Copy</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="flex items-center space-x-1"
-                      >
-                        <Link href="/dashboard#keys">
-                          <RefreshCw className="w-4 h-4" />
-                          <span>Regenerate</span>
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center py-8 space-y-4">
-                    <p className="text-gray-600">
-                      You need to create an API key to access your reviews
-                    </p>
-                    <Button asChild size="lg">
-                      <Link href="/dashboard">Create API Key in Dashboard</Link>
-                    </Button>
-                  </div>
-                )}
+                <CreateNewApiKey showDetails={false} />
               </WizardStep>
 
               {/* Step 4: Integration */}
@@ -344,10 +232,7 @@ export default function GoogleReviewPage() {
               >
                 <div className="space-y-6">
                   <CodeBlock
-                    code={generateCodeSnippet(
-                      placeId,
-                      apiKeyQuery.data?.apiKey ?? null,
-                    )}
+                    code={generateCodeSnippet(placeId)}
                     language="javascript"
                     title="Integration Code"
                   />
