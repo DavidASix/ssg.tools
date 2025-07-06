@@ -66,7 +66,10 @@ export const POST: RequestHandler<NextRouteContext> = withApiKey(
       ]);
 
       const response = schema.response.parse({
-        reviews,
+        reviews: reviews.map((review) => ({
+          ...review,
+          datetime: review.datetime ? review.datetime.toISOString() : null,
+        })),
         stats,
       });
       return NextResponse.json(response);

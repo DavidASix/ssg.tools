@@ -1,48 +1,35 @@
 "use client";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+
+import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
+import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import requests from "@/lib/requests";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 
+import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 import GooglePlaceInput from "./_components/google-place-input";
 import { ReviewCard } from "./_components/review-card";
 import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";
-import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 interface Review {
-  id: string;
-  author: string;
-  rating: number;
-  text: string;
-  date: string;
+  author_name: string | null;
+  author_image: string | null;
+  datetime: Date | null;
+  link: string | null;
+  rating: number | null;
+  comments: string | null;
 }
 
-const mockReviews: Review[] = [
-  {
-    id: "1",
-    author: "John Smith",
-    rating: 5,
-    text: "Excellent service! The team was professional and delivered exactly what we needed. Highly recommend to anyone looking for quality work.",
-    date: "2024-01-15",
-  },
-  {
-    id: "2",
-    author: "Sarah Johnson",
-    rating: 5,
-    text: "Outstanding experience from start to finish. Great communication and the results exceeded our expectations.",
-    date: "2024-01-10",
-  },
-  {
-    id: "3",
-    author: "Mike Davis",
-    rating: 4,
-    text: "Very satisfied with the service. Professional, timely, and great value for money.",
-    date: "2024-01-05",
-  },
-];
+interface BusinessStats {
+  review_count: number | null;
+  review_score: number | null;
+}
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -55,21 +42,61 @@ const STEPS = [
 
 export default function GoogleReviewPage() {
   const [placeId, setPlaceId] = useState<string | null>(null);
+  const [placeName, setPlaceName] = useState<string | null>(null);
+  const [placeAddress, setPlaceAddress] = useState<string | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoadingReviews, setIsLoadingReviews] = useState(false);
+  const [businessStats, setBusinessStats] = useState<BusinessStats | null>(
+    null,
+  );
   const [currentStep, setCurrentStep] = useState(1);
 
-  const fetchReviews = async () => {
+  const apiKeyQuery = useQuery({
+    queryKey: ["apiKey"],
+    queryFn: async () => {
+      const { apiKey } = await requests.get(getLatestActiveKeySchema);
+      return apiKey;
+    },
+    meta: {
+      errorMessage: "Failed to fetch API key",
+    },
+  });
+
+  const fetchReviewsMutation = useMutation({
+    mutationFn: async (data: {
+      place_id: string;
+      name?: string;
+      formatted_address?: string;
+    }) => {
+      return requests.post(insertNewBusinessSchema, data);
+    },
+    onSuccess: (data) => {
+      setReviews(data.reviews);
+      setBusinessStats(data.stats);
+      setCurrentStep(apiKeyQuery.data ? 4 : 3);
+    },
+    meta: {
+      errorMessage: "Failed to fetch reviews",
+    },
+  });
+
+  const onPlaceSelect = (
+    selectedPlaceId: string,
+    placeData: { name?: string; formatted_address?: string },
+  ) => {
+    setPlaceId(selectedPlaceId);
+    setPlaceName(placeData.name ?? null);
+    setPlaceAddress(placeData.formatted_address ?? null);
+    setCurrentStep(2);
+  };
+
+  const fetchReviews = () => {
     if (!placeId) return;
 
-    setIsLoadingReviews(true);
-
-    // Simulate API call with mock data
-    setTimeout(() => {
-      setReviews(mockReviews);
-      setIsLoadingReviews(false);
-      setCurrentStep(3);
-    }, 2000);
+    fetchReviewsMutation.mutate({
+      place_id: placeId,
+      name: placeName || undefined,
+      formatted_address: placeAddress || undefined,
+    });
   };
 
   const getStepStatus = (step: number): StepStatus => {
@@ -126,12 +153,7 @@ export default function GoogleReviewPage() {
                     Enter your business name as it appears on Google Maps
                   </label>
                 </div>
-                <GooglePlaceInput
-                  onPlaceSelect={(selectedPlaceId) => {
-                    setPlaceId(selectedPlaceId);
-                    setCurrentStep(2);
-                  }}
-                />
+                <GooglePlaceInput onPlaceSelect={onPlaceSelect} />
                 {placeId && (
                   <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
                     <p className="text-sm text-green-800">
@@ -156,10 +178,12 @@ export default function GoogleReviewPage() {
                   <div className="space-y-4">
                     <Button
                       onClick={fetchReviews}
-                      disabled={isLoadingReviews || reviews.length > 0}
+                      disabled={
+                        fetchReviewsMutation.isPending || reviews.length > 0
+                      }
                       className="w-full"
                     >
-                      {isLoadingReviews ? (
+                      {fetchReviewsMutation.isPending ? (
                         <>
                           <LoadingSpinner size={16} className="mr-2" />
                           Fetching Reviews...
@@ -171,29 +195,34 @@ export default function GoogleReviewPage() {
                       )}
                     </Button>
 
-                    {isLoadingReviews && (
-                      <div className="space-y-4">
-                        {[1, 2, 3].map((i) => (
-                          <ReviewSkeleton key={i} />
-                        ))}
-                      </div>
-                    )}
+                    {fetchReviewsMutation.isPending &&
+                      [1, 2, 3].map((i) => <ReviewSkeleton key={i} />)}
 
                     {reviews.length > 0 && (
-                      <div className="space-y-4">
-                        <p className="text-sm text-green-800 font-medium">
-                          ✓ Found {reviews.length} reviews
+                      <>
+                        <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                          {businessStats && (
+                            <div className="mt-2 text-sm text-green-700">
+                              <p>Total Reviews: {businessStats.review_count}</p>
+                              <p>
+                                Average Rating: {businessStats.review_score}/5
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm font-semibold text-gray-800">
+                          {Math.min(reviews.length, 5)} recent reviews:
                         </p>
-                        {reviews.map((review) => (
+                        {reviews.slice(0, 5).map((review, index) => (
                           <ReviewCard
-                            key={review.id}
-                            author={review.author}
-                            rating={review.rating}
-                            text={review.text}
-                            date={review.date}
+                            key={index}
+                            author={review.author_name || "Anonymous"}
+                            rating={review.rating || 0}
+                            text={review.comments || "No comment"}
+                            date={review.datetime}
                           />
                         ))}
-                      </div>
+                      </>
                     )}
                   </div>
                 )}
@@ -206,7 +235,10 @@ export default function GoogleReviewPage() {
                 description="Create a secure API key to access your reviews programmatically"
                 status={getStepStatus(3)}
               >
-                <CreateNewApiKey showDetails={false} />
+                <CreateNewApiKey
+                  showDetails={false}
+                  onKeyGenerated={() => setCurrentStep(4)}
+                />
               </WizardStep>
 
               {/* Step 4: Display Reviews */}

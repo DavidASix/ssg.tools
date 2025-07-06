@@ -4,7 +4,7 @@ interface ReviewCardProps {
   author: string;
   rating: number;
   text: string;
-  date: string;
+  date: Date | null;
 }
 
 export function ReviewCard({ author, rating, text, date }: ReviewCardProps) {
@@ -32,7 +32,11 @@ export function ReviewCard({ author, rating, text, date }: ReviewCardProps) {
           </div>
         </div>
         <p className="text-sm text-gray-600 mb-1">{text}</p>
-        <p className="text-xs text-gray-400">{date}</p>
+        {date && (
+          <p className="text-xs text-gray-400">
+            {date.toISOString().slice(0, 10)}
+          </p>
+        )}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { reviews, businesses, business_stats } from "@/schema/schema";
 import { db } from "@/schema/db";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import GoogleReviews from "@/google-reviews";
 
 /**
@@ -47,6 +47,13 @@ export async function updateBusinessStats(business_id: number): Promise<{
   return insertedStats;
 }
 
+/**
+ * Fetch the latest reviews for a business from Google and insert them into the database.
+ * This function will only insert new reviews that do not already exist in the database.
+ *
+ * @param { business_id } - The database business ID to update.
+ * @returns { Array } - An array of inserted reviews.
+ */
 export async function updateBusinessReviews(business_id: number) {
   const business = await db
     .select()
@@ -68,9 +75,12 @@ export async function updateBusinessReviews(business_id: number) {
     .select()
     .from(reviews)
     .where(
-      inArray(
-        reviews.lookup_id,
-        recentReviews.map((r) => r.review_id),
+      and(
+        inArray(
+          reviews.lookup_id,
+          recentReviews.map((r) => r.review_id),
+        ),
+        eq(reviews.business_id, business_id),
       ),
     );
 
@@ -95,4 +105,5 @@ export async function updateBusinessReviews(business_id: number) {
   if (insertableReviews.length > 0) {
     await db.insert(reviews).values(insertableReviews);
   }
+  return insertableReviews;
 }

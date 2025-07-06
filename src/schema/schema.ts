@@ -108,8 +108,9 @@ export const businesses = pgTable("businesses", {
   user_id: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  business_name: text("business_name"),
+  name: text("name"),
   place_id: varchar("place_id", { length: 256 }),
+  address: text("address"),
 });
 
 export const reviews = pgTable("reviews", {

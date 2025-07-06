@@ -1,4 +1,4 @@
-import { type ZodTypeAny } from "zod";
+import { z, type ZodTypeAny } from "zod";
 
 /**
  * Defines the structure of an API schema, including the URL, request schema, and response schema.
@@ -14,3 +14,8 @@ export type APISchema<
   request: TRequestSchema;
   response: TResponseSchema;
 };
+
+export const stringDate = z
+  .string()
+  .datetime()
+  .transform((str) => new Date(str));
