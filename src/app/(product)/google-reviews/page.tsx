@@ -22,9 +22,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
+import GooglePlaceInput from "./_components/google-place-input";
 
 export default function GoogleReviewPage() {
   const [showApiKey, setShowApiKey] = useState(false);
+  const [placeId, setPlaceId] = useState<string | null>(null);
 
   // Query to check if API key exists
   const apiKeyQuery = useQuery({
@@ -165,11 +167,17 @@ export default function GoogleReviewPage() {
                   Find your Google Place ID in Google Maps or Business Profile
                   and add it to your configuration.
                 </CardDescription>
-                <div className="relative aspect-video rounded-md overflow-hidden bg-muted flex items-center justify-center">
-                  <div className="text-center text-muted-foreground text-sm p-4">
-                    [Placeholder image: Screenshot showing how to find Google
-                    Place ID]
-                  </div>
+                <div className="relative aspect-video rounded-md overflow-visible bg-muted flex flex-col items-center justify-center">
+                  <GooglePlaceInput
+                    onPlaceSelect={(selectedPlaceId) =>
+                      setPlaceId(selectedPlaceId)
+                    }
+                  />
+                  {placeId && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Selected Place ID: <strong>{placeId}</strong>
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
