@@ -18,7 +18,6 @@ interface GooglePlaceInputProps {
     placeId: string,
     place: google.maps.places.PlaceResult,
   ) => void;
-  placeholder?: string;
   className?: string;
 }
 
