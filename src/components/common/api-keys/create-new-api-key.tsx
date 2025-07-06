@@ -8,15 +8,15 @@ import {
   Info,
   RefreshCw,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import checkActiveSubscriptionSchema from "@/app/api/purchases/check-active-subscription/schema";
 import createApiKeySchema from "@/app/api/security/create-api-key/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
 import requests from "@/lib/requests";
 
-import { Button } from "@/components/ui/button";
-import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,6 +28,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 
 interface RegenerateKeyDialogProps {
   children: React.ReactNode;
@@ -85,6 +87,16 @@ export default function CreateNewApiKey({
 }: CreateNewApiKeyProps) {
   const [showApiKey, setShowApiKey] = useState(false);
 
+  const subscriptionQuery = useQuery({
+    queryKey: ["activeSubscription"],
+    queryFn: async () => {
+      return await requests.get(checkActiveSubscriptionSchema);
+    },
+    meta: {
+      errorMessage: "Failed to check subscription status",
+    },
+  });
+
   const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],
     queryFn: async () => {
@@ -128,6 +140,52 @@ export default function CreateNewApiKey({
   };
 
   const hasApiKey = !apiKeyQuery.isLoading && currentApiKey;
+  const hasActiveSubscription = subscriptionQuery.data?.hasActiveSubscription;
+
+  if (subscriptionQuery.isLoading) {
+    return (
+      <div className={className}>
+        <div className="flex items-center space-x-2 justify-center py-8">
+          <LoadingSpinner size={32} />
+        </div>
+      </div>
+    );
+  }
+
+  if (!hasActiveSubscription) {
+    return (
+      <div className={className}>
+        {showDetails && (
+          <div className="mb-6">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-2">
+              Your API Key
+            </h3>
+            <p className="text-base text-gray-600">
+              This key allows your website to securely fetch reviews from our
+              service.
+            </p>
+          </div>
+        )}
+
+        <div className="text-center py-12 space-y-6">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+            <Info className="w-8 h-8 text-gray-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Subscription Required
+            </h3>
+            <p className="text-gray-600 mb-4">
+              You need an active subscription to generate and use API keys.
+            </p>
+            <Button asChild size="lg">
+              <Link href="/subscription">Set Up Subscription</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={className}>
