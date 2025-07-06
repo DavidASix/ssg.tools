@@ -3,7 +3,6 @@ import { useState } from "react";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
-import { CodeBlock } from "@/components/ui/code-block";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 
 import GooglePlaceInput from "./_components/google-place-input";
@@ -11,6 +10,7 @@ import { ReviewCard } from "./_components/review-card";
 import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";
+import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 interface Review {
   id: string;
@@ -44,27 +44,13 @@ const mockReviews: Review[] = [
   },
 ];
 
-const generateCodeSnippet = (placeId: string | null): string => {
-  return `// Fetch your Google Reviews at build time
-const response = await fetch('https://api.ssg.tools/reviews/${placeId || "YOUR_PLACE_ID"}', {
-  headers: {
-    'Authorization': 'Bearer YOUR_API_KEY',
-  }
-});
-
-const reviews = await response.json();
-
-// Use reviews in your static site generation
-console.log(reviews);`;
-};
-
 type StepStatus = "completed" | "active" | "inactive";
 
 const STEPS = [
   { num: 1, title: "Select Place", desc: "Choose your Google Business" },
   { num: 2, title: "Fetch Reviews", desc: "Get your latest reviews" },
   { num: 3, title: "Generate API Key", desc: "Create your access token" },
-  { num: 4, title: "Integrate", desc: "Add to your build process" },
+  { num: 4, title: "Display Reviews", desc: "Integrate and show on your site" },
 ];
 
 export default function GoogleReviewPage() {
@@ -223,44 +209,14 @@ export default function GoogleReviewPage() {
                 <CreateNewApiKey showDetails={false} />
               </WizardStep>
 
-              {/* Step 4: Integration */}
+              {/* Step 4: Display Reviews */}
               <WizardStep
                 step={4}
-                title="Integrate Into Your App"
-                description="Use this code snippet to fetch reviews during your build process"
+                title="Display Your Reviews"
+                description="Choose your framework and copy the integration code to display reviews on your site"
                 status={getStepStatus(4)}
               >
-                <div className="space-y-6">
-                  <CodeBlock
-                    code={generateCodeSnippet(placeId)}
-                    language="javascript"
-                    title="Integration Code"
-                  />
-
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <h4 className="font-semibold text-blue-900 mb-2">
-                      Framework Examples:
-                    </h4>
-                    <ul className="text-sm text-blue-800 space-y-1">
-                      <li>
-                        • <strong>Gatsby:</strong> Use in gatsby-node.js during
-                        createPages
-                      </li>
-                      <li>
-                        • <strong>Next.js:</strong> Use in getStaticProps or
-                        generateStaticParams
-                      </li>
-                      <li>
-                        • <strong>11ty:</strong> Use in _data directory or as a
-                        global data file
-                      </li>
-                      <li>
-                        • <strong>Hugo:</strong> Use with Hugo&apos;s data
-                        templates and APIs
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                <FrameworkIntegrationTabs placeId={placeId} />
               </WizardStep>
             </div>
           </div>
