@@ -1,6 +1,6 @@
 import { reviews, businesses, business_stats } from "@/schema/schema";
 import { db } from "@/schema/db";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import GoogleReviews from "@/google-reviews";
 
 /**
@@ -75,9 +75,12 @@ export async function updateBusinessReviews(business_id: number) {
     .select()
     .from(reviews)
     .where(
-      inArray(
-        reviews.lookup_id,
-        recentReviews.map((r) => r.review_id),
+      and(
+        inArray(
+          reviews.lookup_id,
+          recentReviews.map((r) => r.review_id),
+        ),
+        eq(reviews.business_id, business_id),
       ),
     );
 
