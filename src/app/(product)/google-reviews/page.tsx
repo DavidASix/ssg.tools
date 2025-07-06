@@ -12,7 +12,7 @@ import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";
 
-export interface Review {
+interface Review {
   id: string;
   author: string;
   rating: number;
@@ -20,7 +20,7 @@ export interface Review {
   date: string;
 }
 
-export const mockReviews: Review[] = [
+const mockReviews: Review[] = [
   {
     id: "1",
     author: "John Smith",
