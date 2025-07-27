@@ -79,11 +79,13 @@ function RegenerateKeyDialog({
 interface CreateNewApiKeyProps {
   showDetails?: boolean;
   className?: string;
+  onKeyGenerated?: (key: string) => void;
 }
 
 export default function CreateNewApiKey({
   showDetails = true,
   className = "",
+  onKeyGenerated,
 }: CreateNewApiKeyProps) {
   const [showApiKey, setShowApiKey] = useState(false);
 
@@ -112,9 +114,12 @@ export default function CreateNewApiKey({
     mutationFn: async () => {
       await requests.get(createApiKeySchema);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("API key generated successfully");
-      apiKeyQuery.refetch();
+      const refetchResult = await apiKeyQuery.refetch();
+      if (onKeyGenerated) {
+        onKeyGenerated(refetchResult.data ?? "");
+      }
     },
     onError: (error) => {
       console.log("Error generating API key:", error);

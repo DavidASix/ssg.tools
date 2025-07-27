@@ -136,8 +136,11 @@ export default function GooglePlaceInput({
         ref: (node: HTMLElement | null) => {
           autocompleteRef.current = node;
         },
-        className: cn("w-full bg-white border rounded-lg", className),
-        style: { display: isLoaded ? "block" : "none" },
+        className: cn("w-full  border rounded-lg", className),
+        style: {
+          display: isLoaded ? "block" : "none",
+          colorScheme: "light",
+        },
       })}
       {!isLoaded && (
         <div className="flex justify-center items-center">
