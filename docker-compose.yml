@@ -25,6 +25,7 @@ services:
       - AUTH_RESEND_KEY=${AUTH_RESEND_KEY}
       - MAILER_ADDRESS=${MAILER_ADDRESS}
       - RAPID_KEY=${RAPID_KEY}
+      - WATCHPACK_POLLING=true # Enable polling as a hopeful fix for the hot-reloading issues (but maybe it makes things slow)
     volumes:
       - .:/app # Mount current directory to /app in container
     depends_on:
