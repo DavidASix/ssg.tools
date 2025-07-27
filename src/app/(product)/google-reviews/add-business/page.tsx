@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 
 import GooglePlaceInput from "./_components/google-place-input";
-import { ReviewCard } from "./_components/review-card";
+import { ReviewCard } from "../_components/review-card";
 import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";

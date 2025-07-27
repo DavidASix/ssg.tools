@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
-import { ReviewCard } from "../add-business/_components/review-card";
+import { ReviewCard } from "../_components/review-card";
 import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 export default function BusinessDetailsPage() {
