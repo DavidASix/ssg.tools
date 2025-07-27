@@ -106,11 +106,12 @@ export default schema;
 2. **Implement Route Handler** (`/api/endpoint/route.ts`):
 ```typescript
 import schema from "./schema";
+import { NextRouteContext, RequestHandler } from "@/middleware/types";
 import { withAuth } from "@/middleware/withAuth";
 import { withBody } from "@/middleware/withBody"; // For POST/PUT
 
 // GET request
-export const GET = withAuth(async (_, context) => {
+export const GET: RequestHandler<NextRouteContext> = withAuth(async (_, context) => {
   // Implementation...
   const response = schema.response.parse(result);
   return NextResponse.json(response);
