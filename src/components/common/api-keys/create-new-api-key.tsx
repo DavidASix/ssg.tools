@@ -114,11 +114,11 @@ export default function CreateNewApiKey({
     mutationFn: async () => {
       await requests.get(createApiKeySchema);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("API key generated successfully");
-      apiKeyQuery.refetch();
+      const refetchResult = await apiKeyQuery.refetch();
       if (onKeyGenerated) {
-        onKeyGenerated(apiKeyQuery.data ?? "");
+        onKeyGenerated(refetchResult.data ?? "");
       }
     },
     onError: (error) => {
