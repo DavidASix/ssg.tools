@@ -1,10 +1,5 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { db } from "@/schema/db";
 import { business_stats } from "@/schema/schema";
-
-const connectionString = process.env.DATABASE_URL!;
-const client = postgres(connectionString);
-const db = drizzle(client);
 
 export async function up() {
   console.log("Seeding business_stats table...");

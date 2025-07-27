@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import * as userSeed from "./user";
 import * as accountSeed from "./account";
 import * as sessionSeed from "./session";
@@ -10,8 +10,6 @@ import * as businessStatsSeed from "./business_stats";
 import * as eventsSeed from "./events";
 import * as apiKeysSeed from "./api_keys";
 import * as subscriptionPaymentsSeed from "./subscription_payments";
-
-dotenv.config();
 
 const seedModules = [
   userSeed,
