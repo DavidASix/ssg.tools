@@ -5,7 +5,6 @@ export async function up() {
   console.log("Seeding subscription_payments table...");
 
   await db.insert(subscription_payments).values({
-    id: 0,
     user_id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
     stripe_customer_id: "cus_1234567890example",
     invoice_id: "in_1234567890example123",

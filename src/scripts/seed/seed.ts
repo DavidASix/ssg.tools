@@ -17,12 +17,12 @@ const seedModules = [
   sessionSeed,
   verificationTokenSeed,
   authenticatorSeed,
+  apiKeysSeed,
+  subscriptionPaymentsSeed,
   businessesSeed,
   reviewsSeed,
   businessStatsSeed,
   eventsSeed,
-  apiKeysSeed,
-  subscriptionPaymentsSeed,
 ];
 
 async function main() {

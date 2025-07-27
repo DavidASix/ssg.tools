@@ -5,7 +5,6 @@ export async function up() {
   console.log("Seeding businesses table...");
 
   await db.insert(businesses).values({
-    id: 0,
     user_id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
     name: "UniClaw",
     place_id: "ChIJZVJixfH1K4gRm44apfuxMRg",

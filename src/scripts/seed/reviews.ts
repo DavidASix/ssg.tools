@@ -6,8 +6,7 @@ export async function up() {
 
   await db.insert(reviews).values([
     {
-      id: 0,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2sxQ2FrSlZja0pJUlVkT1pUQTVPVU5KU1VGbVRHYxAB",
       author_name: "Mieke Kanmacher",
@@ -20,8 +19,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 1,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT214QmJEbDFNMGRTY0RsYVFqbDZkak5OV0VGQ05uYxAB",
       author_name: "Angela",
@@ -35,8 +33,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 2,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT25GUVJUSXRNak5TTmpadVh6VlpaREJSWDBWUVpFRRAB",
       author_name: "Andy Madison",
@@ -50,8 +47,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 3,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT214NmVsQk1PRmgwVUZsVlNFUTVjRVZSVVRsWVEzYxAB",
       author_name: "Justin Chhay",
@@ -64,8 +60,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 4,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2xGTmRraE1SMGt5T0dRMGNpMWFZMmRDTVZkWVozYxAB",
       author_name: "J A",
@@ -79,8 +74,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 5,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2pKWU9VWk9PVEJ2U2xKclVFcDBPVFF5VjBodlNuYxAB",
       author_name: "Luca",
@@ -93,8 +87,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 6,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT25OZldYQTBVVEZNZVV3eWQwTmpRelJMWlVJMmVFRRAB",
       author_name: "Samuel C.",
@@ -108,8 +101,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 7,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2w5UGJETkpiR05EYlRkQmIwTnRiRXhyVlVSUFVXYxAB",
       author_name: "Beckie Richards",
@@ -123,8 +115,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 8,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2tkSFRGVldlSE10ZFZNeVpHdHpaMGx3UW14dldWRRAB",
       author_name: "Kareem Saleh",
@@ -137,8 +128,7 @@ export async function up() {
       created_at: new Date("2025-07-27T04:22:09.483Z"),
     },
     {
-      id: 9,
-      business_id: 0,
+      business_id: 1,
       lookup_id:
         "Ci9DQUlRQUNvZENodHljRjlvT2pCbmQxSktWMTgxV1hKR1dYRkdkRWhRYWt0Mk5GRRAB",
       author_name: "Joanne Moniz",
