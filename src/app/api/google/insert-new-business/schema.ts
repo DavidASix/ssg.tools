@@ -2,11 +2,14 @@ import { z } from "zod";
 import { stringDate, type APISchema } from "@/schema/types";
 
 const schema = {
-  url: "/api/fetch-updated-data",
+  url: "/api/google/insert-new-business",
   request: z.object({
-    business_id: z.number(),
+    place_id: z.string(),
+    name: z.string().optional(),
+    formatted_address: z.string().optional(),
   }),
   response: z.object({
+    business_id: z.number(),
     reviews: z
       .object({
         author_name: z.string().nullable(),

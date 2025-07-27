@@ -57,6 +57,13 @@
       "when": 1751151997815,
       "tag": "0007_fantastic_jazinda",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1751821936378,
+      "tag": "0008_nice_white_queen",
+      "breakpoints": true
     }
   ]
 }
