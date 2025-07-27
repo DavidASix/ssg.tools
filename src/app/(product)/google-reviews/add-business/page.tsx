@@ -1,6 +1,7 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import Link from "next/link";
 
 import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
@@ -36,6 +37,11 @@ const STEPS = [
   { num: 1, title: "Select Place", desc: "Choose your Google Business" },
   { num: 2, title: "Fetch Reviews", desc: "Get your latest reviews" },
   { num: 3, title: "Generate API Key", desc: "Create your access token" },
+  {
+    num: 4,
+    title: "View Integration Guide",
+    desc: "Setup your website integration",
+  },
 ];
 
 export default function AddBusinessPage() {
@@ -47,6 +53,7 @@ export default function AddBusinessPage() {
     null,
   );
   const [currentStep, setCurrentStep] = useState(1);
+  const [businessId, setBusinessId] = useState<number | null>(null);
 
   const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],
@@ -70,6 +77,7 @@ export default function AddBusinessPage() {
     onSuccess: (data) => {
       setReviews(data.reviews);
       setBusinessStats(data.stats);
+      setBusinessId(data.business_id);
       setCurrentStep(apiKeyQuery.data ? 4 : 3);
     },
     meta: {
@@ -239,6 +247,43 @@ export default function AddBusinessPage() {
                 />
               </WizardStep>
 
+              {/* Step 4: View Integration Guide */}
+              <WizardStep
+                step={4}
+                title="View Integration Guide"
+                description="Setup your website to display reviews"
+                status={getStepStatus(4)}
+              >
+                {currentStep < 4 ? (
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-sm text-yellow-800">
+                      ⚠️ Complete the previous steps to view integration
+                      instructions
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                      <p className="text-sm text-green-800">
+                        ✅ Business successfully created! You can now integrate
+                        reviews into your website.
+                      </p>
+                    </div>
+                    <Button
+                      size="lg"
+                      className="w-full"
+                      asChild
+                      disabled={!businessId}
+                    >
+                      <Link
+                        href={`/google-reviews/${businessId}?tab=integration`}
+                      >
+                        View Integration Instructions
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </WizardStep>
             </div>
           </div>
         </div>
