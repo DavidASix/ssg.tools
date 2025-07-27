@@ -1,0 +1,30 @@
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { events } from "@/schema/schema";
+
+const connectionString = process.env.DATABASE_URL!;
+const client = postgres(connectionString);
+const db = drizzle(client);
+
+export async function up() {
+  console.log("Seeding events table...");
+
+  await db.insert(events).values([
+    {
+      id: 0,
+      event: "update_reviews",
+      user_id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
+      metadata: { business_id: 0 },
+      timestamp: new Date("2025-07-27T04:22:09.499Z"),
+    },
+    {
+      id: 1,
+      event: "update_stats",
+      user_id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
+      metadata: { business_id: 0 },
+      timestamp: new Date("2025-07-27T04:22:09.502Z"),
+    },
+  ]);
+
+  console.log("Events seeded successfully");
+}

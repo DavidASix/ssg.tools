@@ -1,0 +1,22 @@
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { users } from "@/schema/schema";
+
+const connectionString = process.env.DATABASE_URL!;
+const client = postgres(connectionString);
+const db = drizzle(client);
+
+export async function up() {
+  console.log("Seeding user table...");
+
+  await db.insert(users).values({
+    id: "6506bac5-e63a-4fa3-b9c9-a94ab5a549fc",
+    name: null,
+    email: "user@example.com",
+    emailVerified: new Date("2025-07-27T08:14:09.624Z"),
+    image: null,
+    stripe_customer_id: "cus_1234567890example",
+  });
+
+  console.log("User seeded successfully");
+}
