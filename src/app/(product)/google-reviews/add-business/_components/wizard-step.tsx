@@ -9,6 +9,7 @@ interface WizardStepProps {
   description: string;
   status: StepStatus;
   children: React.ReactNode;
+  informationalStep?: boolean;
 }
 
 export function WizardStep({
@@ -17,6 +18,7 @@ export function WizardStep({
   description,
   status,
   children,
+  informationalStep = false,
 }: WizardStepProps) {
   return (
     <Card className={`${status === "inactive" ? "opacity-50" : ""}`}>
@@ -28,6 +30,7 @@ export function WizardStep({
           status={status}
           size="md"
           layout="horizontal"
+          informationalStep={informationalStep}
         />
 
         <div className="bg-gray-50 p-6 rounded-lg">{children}</div>

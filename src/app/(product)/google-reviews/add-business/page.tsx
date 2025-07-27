@@ -33,6 +33,7 @@ interface BusinessStats {
 
 type StepStatus = "completed" | "active" | "inactive";
 
+// An informational step is a step which is automatically checked after all the preceding steps are completed.
 const STEPS = [
   { num: 1, title: "Select Place", desc: "Choose your Google Business" },
   { num: 2, title: "Fetch Reviews", desc: "Get your latest reviews" },
@@ -41,6 +42,7 @@ const STEPS = [
     num: 4,
     title: "View Integration Guide",
     desc: "Setup your website integration",
+    informationalStep: true,
   },
 ];
 
@@ -106,6 +108,11 @@ export default function AddBusinessPage() {
   };
 
   const getStepStatus = (step: number): StepStatus => {
+    // For step 4 (final step), show as completed when currentStep >= 4
+    const currentStepDetails = STEPS.find((s) => s.num === step);
+    if (currentStepDetails?.informationalStep && step <= currentStep) {
+      return "completed";
+    }
     if (step < currentStep) return "completed";
     if (step === currentStep) return "active";
     return "inactive";
@@ -141,6 +148,7 @@ export default function AddBusinessPage() {
                   status={getStepStatus(step.num)}
                   size="lg"
                   layout="vertical"
+                  informationalStep={!!step.informationalStep}
                 />
               ))}
             </div>
@@ -253,6 +261,7 @@ export default function AddBusinessPage() {
                 title="View Integration Guide"
                 description="Setup your website to display reviews"
                 status={getStepStatus(4)}
+                informationalStep={true}
               >
                 {currentStep < 4 ? (
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">

@@ -10,6 +10,7 @@ interface StepIndicatorProps {
   size?: "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";
   className?: string;
+  informationalStep?: boolean;
 }
 
 export function StepIndicator({
@@ -20,6 +21,7 @@ export function StepIndicator({
   size = "md",
   layout = "vertical",
   className = "",
+  informationalStep = false,
 }: StepIndicatorProps) {
   const sizeClasses = {
     sm: "w-8 h-8 text-sm",
@@ -52,6 +54,7 @@ export function StepIndicator({
     return status === "inactive" ? "text-gray-400" : "text-gray-600";
   };
 
+  //TODO: Why claude did it this a mystery; couldn't just use responsive styles? insane.
   if (layout === "horizontal") {
     return (
       <div className={`flex items-center space-x-4 ${className}`}>
@@ -59,6 +62,9 @@ export function StepIndicator({
           className={`${sizeClasses[size]} rounded-full flex items-center justify-center font-bold transition-all ${getStatusClasses()}`}
         >
           {status === "completed" ? (
+            <CheckCircle className={iconSizes[size]} />
+          ) : informationalStep ? (
+            // TODO: Probably this should be a different icon
             <CheckCircle className={iconSizes[size]} />
           ) : (
             step
@@ -80,6 +86,9 @@ export function StepIndicator({
         className={`${sizeClasses[size]} rounded-full flex items-center justify-center font-bold mx-auto mb-4 transition-all ${getStatusClasses()}`}
       >
         {status === "completed" ? (
+          <CheckCircle className={iconSizes[size]} />
+        ) : informationalStep ? (
+          // TODO: Probably this should be a different icon
           <CheckCircle className={iconSizes[size]} />
         ) : (
           step
