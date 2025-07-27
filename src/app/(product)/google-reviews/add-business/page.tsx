@@ -10,7 +10,6 @@ import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 
-import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 import GooglePlaceInput from "./_components/google-place-input";
 import { ReviewCard } from "./_components/review-card";
 import { ReviewSkeleton } from "./_components/review-skeleton";
@@ -37,7 +36,6 @@ const STEPS = [
   { num: 1, title: "Select Place", desc: "Choose your Google Business" },
   { num: 2, title: "Fetch Reviews", desc: "Get your latest reviews" },
   { num: 3, title: "Generate API Key", desc: "Create your access token" },
-  { num: 4, title: "Display Reviews", desc: "Integrate and show on your site" },
 ];
 
 export default function AddBusinessPage() {
@@ -241,15 +239,6 @@ export default function AddBusinessPage() {
                 />
               </WizardStep>
 
-              {/* Step 4: Display Reviews */}
-              <WizardStep
-                step={4}
-                title="Display Your Reviews"
-                description="Choose your framework and copy the integration code to display reviews on your site"
-                status={getStepStatus(4)}
-              >
-                <FrameworkIntegrationTabs placeId={placeId} />
-              </WizardStep>
             </div>
           </div>
         </div>

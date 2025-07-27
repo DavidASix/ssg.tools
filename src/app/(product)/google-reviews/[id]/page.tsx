@@ -8,9 +8,17 @@ import getBusinessDetailsSchema from "@/app/api/google/get-business-details/sche
 import requests from "@/lib/requests";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import { ReviewCard } from "../add-business/_components/review-card";
+import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 
 export default function BusinessDetailsPage() {
   const params = useParams();
@@ -101,73 +109,99 @@ export default function BusinessDetailsPage() {
         </div>
       </section>
 
-      {/* Reviews Section */}
+      {/* Tabs Section */}
       <section className="section section-padding">
         <div className="content">
           <div className="max-w-4xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-bold text-gray-900">
-                Recent Reviews ({reviews.length})
-              </h2>
-            </div>
+            <Tabs defaultValue="details" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="details">Details & Reviews</TabsTrigger>
+                <TabsTrigger value="integration">Integration</TabsTrigger>
+              </TabsList>
 
-            {reviews.length === 0 ? (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <p className="text-gray-500 mb-4">
-                    No reviews have been fetched for this business yet.
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    Reviews are automatically updated when you add a business.
-                  </p>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-6">
-                {reviews.map((review) => (
-                  <ReviewCard
-                    key={review.id}
-                    author={review.author_name || "Anonymous"}
-                    rating={review.rating || 0}
-                    text={review.comments || "No comment"}
-                    date={review.datetime ? new Date(review.datetime) : null}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Integration Section */}
-      <section className="section section-padding bg-gray-50">
-        <div className="content">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Integration Details
-            </h2>
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <div className="grid md:grid-cols-2 gap-6 text-left">
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
-                    Business ID
-                  </h3>
-                  <code className="text-sm bg-gray-100 px-2 py-1 rounded">
-                    {business.id}
-                  </code>
+              <TabsContent value="details" className="space-y-6">
+                <div className="flex justify-between items-center mb-8">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    Recent Reviews ({reviews.length})
+                  </h2>
                 </div>
-                {business.place_id && (
-                  <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">
-                      Google Place ID
-                    </h3>
-                    <code className="text-sm bg-gray-100 px-2 py-1 rounded break-all">
-                      {business.place_id}
-                    </code>
+
+                {reviews.length === 0 ? (
+                  <Card>
+                    <CardContent className="text-center py-12">
+                      <p className="text-gray-500 mb-4">
+                        No reviews have been fetched for this business yet.
+                      </p>
+                      <p className="text-sm text-gray-400">
+                        Reviews are automatically updated when you add a
+                        business.
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <div className="space-y-6">
+                    {reviews.map((review) => (
+                      <ReviewCard
+                        key={review.id}
+                        author={review.author_name || "Anonymous"}
+                        rating={review.rating || 0}
+                        text={review.comments || "No comment"}
+                        date={
+                          review.datetime ? new Date(review.datetime) : null
+                        }
+                      />
+                    ))}
                   </div>
                 )}
-              </div>
-            </div>
+              </TabsContent>
+
+              <TabsContent value="integration" className="space-y-6">
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                      Integration Instructions
+                    </h2>
+                    <p className="text-gray-600 mb-6">
+                      Choose your framework and copy the integration code to
+                      display reviews on your site.
+                    </p>
+                  </div>
+
+                  <FrameworkIntegrationTabs placeId={business.place_id} />
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Integration Details</CardTitle>
+                      <CardDescription>
+                        Technical information for API integration
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div>
+                          <h3 className="font-semibold text-gray-900 mb-2">
+                            Business ID
+                          </h3>
+                          <code className="text-sm bg-gray-100 px-2 py-1 rounded">
+                            {business.id}
+                          </code>
+                        </div>
+                        {business.place_id && (
+                          <div>
+                            <h3 className="font-semibold text-gray-900 mb-2">
+                              Google Place ID
+                            </h3>
+                            <code className="text-sm bg-gray-100 px-2 py-1 rounded break-all">
+                              {business.place_id}
+                            </code>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </section>
