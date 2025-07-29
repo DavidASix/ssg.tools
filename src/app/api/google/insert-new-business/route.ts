@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { eq, and } from "drizzle-orm";
 
 import schema from "./schema";
 import { NextRouteContext, RequestHandler } from "@/middleware/types";
@@ -22,6 +23,26 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
   withBody(schema, async (_, context) => {
     try {
       const { place_id, name, formatted_address } = context.body;
+
+      // Check if business already exists for this user
+      const [existingBusiness] = await db
+        .select({ id: businesses.id })
+        .from(businesses)
+        .where(
+          and(
+            eq(businesses.place_id, place_id),
+            eq(businesses.user_id, context.user_id),
+          ),
+        )
+        .limit(1);
+
+      if (existingBusiness) {
+        return NextResponse.json(
+          { error: "Business already exists for this user" },
+          { status: 409 },
+        );
+      }
+
       const [business] = await db
         .insert(businesses)
         .values({

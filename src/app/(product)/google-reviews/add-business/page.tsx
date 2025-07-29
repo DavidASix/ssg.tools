@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import checkBusinessExistsSchema from "@/app/api/google/check-business-exists/schema";
 import requests from "@/lib/requests";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
@@ -68,6 +69,18 @@ export default function AddBusinessPage() {
     },
   });
 
+  const checkBusinessQuery = useQuery({
+    queryKey: ["checkBusiness", placeId],
+    queryFn: async () => {
+      if (!placeId) return { business_id: null };
+      return requests.post(checkBusinessExistsSchema, { place_id: placeId });
+    },
+    enabled: !!placeId,
+    meta: {
+      errorMessage: "Failed to check business",
+    },
+  });
+
   const fetchReviewsMutation = useMutation({
     mutationFn: async (data: {
       place_id: string;
@@ -108,6 +121,15 @@ export default function AddBusinessPage() {
   };
 
   const getStepStatus = (step: number): StepStatus => {
+    // If business already exists, only step 1 can be active/completed
+    const businessExists = checkBusinessQuery.data?.business_id;
+    const businessExistFetching = checkBusinessQuery.isFetching;
+    if (step > 1) {
+      if (businessExists || businessExistFetching) {
+        return "inactive";
+      }
+    }
+
     // For step 4 (final step), show as completed when currentStep >= 4
     const currentStepDetails = STEPS.find((s) => s.num === step);
     if (currentStepDetails?.informationalStep && step <= currentStep) {
@@ -117,6 +139,7 @@ export default function AddBusinessPage() {
     if (step === currentStep) return "active";
     return "inactive";
   };
+  const existingBusinessId = checkBusinessQuery.data?.business_id;
 
   return (
     <>
@@ -168,11 +191,31 @@ export default function AddBusinessPage() {
                   </label>
                 </div>
                 <GooglePlaceInput onPlaceSelect={onPlaceSelect} />
-                {placeId && (
-                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
-                    <p className="text-sm text-green-800">
-                      ✓ Selected Place ID: <strong>{placeId}</strong>
-                    </p>
+                {placeId && !checkBusinessQuery.isFetching && (
+                  <div className="mt-4 space-y-3">
+                    {existingBusinessId ? (
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                        <p className="text-sm text-blue-800 mb-2">
+                          ✓ This business is already added to your profile
+                        </p>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full"
+                          asChild
+                        >
+                          <Link href={`/google-reviews/${existingBusinessId}`}>
+                            View Business
+                          </Link>
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                        <p className="text-sm text-green-800">
+                          ✓ Selected Place ID: <strong>{placeId}</strong>
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </WizardStep>
@@ -184,7 +227,9 @@ export default function AddBusinessPage() {
                 description="Preview your Google Reviews that will be available via the API"
                 status={getStepStatus(2)}
               >
-                {!placeId ? (
+                {!placeId ||
+                existingBusinessId ||
+                checkBusinessQuery.isFetching ? (
                   <p className="text-gray-500 text-center py-8">
                     Please select a Google Place first to fetch reviews
                   </p>
@@ -193,7 +238,10 @@ export default function AddBusinessPage() {
                     <Button
                       onClick={fetchReviews}
                       disabled={
-                        fetchReviewsMutation.isPending || reviews.length > 0
+                        fetchReviewsMutation.isPending ||
+                        reviews.length > 0 ||
+                        checkBusinessQuery.isFetching ||
+                        !!existingBusinessId
                       }
                       className="w-full"
                     >
