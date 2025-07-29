@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
@@ -107,7 +107,7 @@ export default function AddBusinessPage() {
     setPlaceId(selectedPlaceId);
     setPlaceName(placeData.name ?? null);
     setPlaceAddress(placeData.formatted_address ?? null);
-    // Don't advance to step 2 yet - wait for business check to complete
+    setCurrentStep(2);
   };
 
   const fetchReviews = () => {
@@ -123,8 +123,11 @@ export default function AddBusinessPage() {
   const getStepStatus = (step: number): StepStatus => {
     // If business already exists, only step 1 can be active/completed
     const businessExists = checkBusinessQuery.data?.business_id;
-    if (businessExists && step > 1) {
-      return "inactive";
+    const businessExistFetching = checkBusinessQuery.isFetching;
+    if (step > 1) {
+      if (businessExists || businessExistFetching) {
+        return "inactive";
+      }
     }
 
     // For step 4 (final step), show as completed when currentStep >= 4
@@ -136,6 +139,7 @@ export default function AddBusinessPage() {
     if (step === currentStep) return "active";
     return "inactive";
   };
+  const existingBusinessId = checkBusinessQuery.data?.business_id;
 
   return (
     <>
@@ -187,9 +191,9 @@ export default function AddBusinessPage() {
                   </label>
                 </div>
                 <GooglePlaceInput onPlaceSelect={onPlaceSelect} />
-                {placeId && (
+                {placeId && !checkBusinessQuery.isFetching && (
                   <div className="mt-4 space-y-3">
-                    {checkBusinessQuery.data?.business_id ? (
+                    {existingBusinessId ? (
                       <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                         <p className="text-sm text-blue-800 mb-2">
                           ✓ This business is already added to your profile
@@ -200,9 +204,7 @@ export default function AddBusinessPage() {
                           className="w-full"
                           asChild
                         >
-                          <Link
-                            href={`/google-reviews/${checkBusinessQuery.data.business_id}`}
-                          >
+                          <Link href={`/google-reviews/${existingBusinessId}`}>
                             View Business
                           </Link>
                         </Button>
@@ -225,7 +227,9 @@ export default function AddBusinessPage() {
                 description="Preview your Google Reviews that will be available via the API"
                 status={getStepStatus(2)}
               >
-                {!placeId ? (
+                {!placeId ||
+                existingBusinessId ||
+                checkBusinessQuery.isFetching ? (
                   <p className="text-gray-500 text-center py-8">
                     Please select a Google Place first to fetch reviews
                   </p>
@@ -234,7 +238,10 @@ export default function AddBusinessPage() {
                     <Button
                       onClick={fetchReviews}
                       disabled={
-                        fetchReviewsMutation.isPending || reviews.length > 0
+                        fetchReviewsMutation.isPending ||
+                        reviews.length > 0 ||
+                        checkBusinessQuery.isFetching ||
+                        !!existingBusinessId
                       }
                       className="w-full"
                     >
