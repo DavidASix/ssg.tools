@@ -97,8 +97,8 @@ export default function GoogleReviewsHomePage() {
                     )}
                   </CardContent>
                   <CardFooter>
-                    <Button variant="outline" className="w-full">
-                      View
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link href={`/google-reviews/${business.id}`}>View</Link>
                     </Button>
                   </CardFooter>
                 </Card>
