@@ -1,4 +1,4 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Info } from "lucide-react";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -64,8 +64,7 @@ export function StepIndicator({
           {status === "completed" ? (
             <CheckCircle className={iconSizes[size]} />
           ) : informationalStep ? (
-            // TODO: Probably this should be a different icon
-            <CheckCircle className={iconSizes[size]} />
+            <Info className={iconSizes[size]} />
           ) : (
             step
           )}
@@ -88,8 +87,7 @@ export function StepIndicator({
         {status === "completed" ? (
           <CheckCircle className={iconSizes[size]} />
         ) : informationalStep ? (
-          // TODO: Probably this should be a different icon
-          <CheckCircle className={iconSizes[size]} />
+          <Info className={iconSizes[size]} />
         ) : (
           step
         )}
