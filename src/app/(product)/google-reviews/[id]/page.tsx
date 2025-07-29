@@ -153,7 +153,9 @@ export default function BusinessDetailsPage() {
                         rating={review.rating || 0}
                         text={review.comments || "No comment"}
                         date={
-                          review.datetime ? new Date(review.datetime) : null
+                          review.datetime && !isNaN(Date.parse(review.datetime))
+                            ? new Date(review.datetime)
+                            : null
                         }
                       />
                     ))}
