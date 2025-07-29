@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 import { NextRouteContext, RequestHandler } from "@/middleware/types";
@@ -60,7 +60,7 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       })
       .from(reviews)
       .where(eq(reviews.business_id, businessId))
-      .orderBy(reviews.datetime);
+      .orderBy(desc(reviews.datetime));
 
     const response = schema.response.parse({
       business: businessData[0],
