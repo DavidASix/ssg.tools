@@ -1,10 +1,11 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
+import checkBusinessExistsSchema from "@/app/api/google/check-business-exists/schema";
 import requests from "@/lib/requests";
 
 import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
@@ -68,6 +69,18 @@ export default function AddBusinessPage() {
     },
   });
 
+  const checkBusinessQuery = useQuery({
+    queryKey: ["checkBusiness", placeId],
+    queryFn: async () => {
+      if (!placeId) return { business_id: null };
+      return requests.post(checkBusinessExistsSchema, { place_id: placeId });
+    },
+    enabled: !!placeId,
+    meta: {
+      errorMessage: "Failed to check business",
+    },
+  });
+
   const fetchReviewsMutation = useMutation({
     mutationFn: async (data: {
       place_id: string;
@@ -94,7 +107,7 @@ export default function AddBusinessPage() {
     setPlaceId(selectedPlaceId);
     setPlaceName(placeData.name ?? null);
     setPlaceAddress(placeData.formatted_address ?? null);
-    setCurrentStep(2);
+    // Don't advance to step 2 yet - wait for business check to complete
   };
 
   const fetchReviews = () => {
@@ -108,6 +121,12 @@ export default function AddBusinessPage() {
   };
 
   const getStepStatus = (step: number): StepStatus => {
+    // If business already exists, only step 1 can be active/completed
+    const businessExists = checkBusinessQuery.data?.business_id;
+    if (businessExists && step > 1) {
+      return "inactive";
+    }
+
     // For step 4 (final step), show as completed when currentStep >= 4
     const currentStepDetails = STEPS.find((s) => s.num === step);
     if (currentStepDetails?.informationalStep && step <= currentStep) {
@@ -169,10 +188,32 @@ export default function AddBusinessPage() {
                 </div>
                 <GooglePlaceInput onPlaceSelect={onPlaceSelect} />
                 {placeId && (
-                  <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md">
-                    <p className="text-sm text-green-800">
-                      ✓ Selected Place ID: <strong>{placeId}</strong>
-                    </p>
+                  <div className="mt-4 space-y-3">
+                    {checkBusinessQuery.data?.business_id ? (
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                        <p className="text-sm text-blue-800 mb-2">
+                          ✓ This business is already added to your profile
+                        </p>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="w-full"
+                          asChild
+                        >
+                          <Link
+                            href={`/google-reviews/${checkBusinessQuery.data.business_id}`}
+                          >
+                            View Business
+                          </Link>
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                        <p className="text-sm text-green-800">
+                          ✓ Selected Place ID: <strong>{placeId}</strong>
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </WizardStep>
