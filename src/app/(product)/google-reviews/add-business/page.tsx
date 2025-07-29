@@ -1,6 +1,7 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import Link from "next/link";
 
 import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
@@ -10,9 +11,8 @@ import CreateNewApiKey from "@/components/common/api-keys/create-new-api-key";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 
-import { FrameworkIntegrationTabs } from "./_components/framework-integration-tabs";
 import GooglePlaceInput from "./_components/google-place-input";
-import { ReviewCard } from "./_components/review-card";
+import { ReviewCard } from "../_components/review-card";
 import { ReviewSkeleton } from "./_components/review-skeleton";
 import { StepIndicator } from "./_components/step-indicator";
 import { WizardStep } from "./_components/wizard-step";
@@ -33,11 +33,17 @@ interface BusinessStats {
 
 type StepStatus = "completed" | "active" | "inactive";
 
+// An informational step is a step which is automatically checked after all the preceding steps are completed.
 const STEPS = [
   { num: 1, title: "Select Place", desc: "Choose your Google Business" },
   { num: 2, title: "Fetch Reviews", desc: "Get your latest reviews" },
   { num: 3, title: "Generate API Key", desc: "Create your access token" },
-  { num: 4, title: "Display Reviews", desc: "Integrate and show on your site" },
+  {
+    num: 4,
+    title: "View Integration Guide",
+    desc: "Setup your website integration",
+    informationalStep: true,
+  },
 ];
 
 export default function AddBusinessPage() {
@@ -49,6 +55,7 @@ export default function AddBusinessPage() {
     null,
   );
   const [currentStep, setCurrentStep] = useState(1);
+  const [businessId, setBusinessId] = useState<number | null>(null);
 
   const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],
@@ -72,6 +79,7 @@ export default function AddBusinessPage() {
     onSuccess: (data) => {
       setReviews(data.reviews);
       setBusinessStats(data.stats);
+      setBusinessId(data.business_id);
       setCurrentStep(apiKeyQuery.data ? 4 : 3);
     },
     meta: {
@@ -100,6 +108,11 @@ export default function AddBusinessPage() {
   };
 
   const getStepStatus = (step: number): StepStatus => {
+    // For step 4 (final step), show as completed when currentStep >= 4
+    const currentStepDetails = STEPS.find((s) => s.num === step);
+    if (currentStepDetails?.informationalStep && step <= currentStep) {
+      return "completed";
+    }
     if (step < currentStep) return "completed";
     if (step === currentStep) return "active";
     return "inactive";
@@ -135,6 +148,7 @@ export default function AddBusinessPage() {
                   status={getStepStatus(step.num)}
                   size="lg"
                   layout="vertical"
+                  informationalStep={!!step.informationalStep}
                 />
               ))}
             </div>
@@ -241,14 +255,43 @@ export default function AddBusinessPage() {
                 />
               </WizardStep>
 
-              {/* Step 4: Display Reviews */}
+              {/* Step 4: View Integration Guide */}
               <WizardStep
                 step={4}
-                title="Display Your Reviews"
-                description="Choose your framework and copy the integration code to display reviews on your site"
+                title="View Integration Guide"
+                description="Setup your website to display reviews"
                 status={getStepStatus(4)}
+                informationalStep={true}
               >
-                <FrameworkIntegrationTabs placeId={placeId} />
+                {currentStep < 4 ? (
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+                    <p className="text-sm text-yellow-800">
+                      ⚠️ Complete the previous steps to view integration
+                      instructions
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-green-50 border border-green-200 rounded-md">
+                      <p className="text-sm text-green-800">
+                        ✅ Business successfully created! You can now integrate
+                        reviews into your website.
+                      </p>
+                    </div>
+                    <Button
+                      size="lg"
+                      className="w-full"
+                      asChild
+                      disabled={!businessId}
+                    >
+                      <Link
+                        href={`/google-reviews/${businessId}?tab=integration`}
+                      >
+                        View Integration Instructions
+                      </Link>
+                    </Button>
+                  </div>
+                )}
               </WizardStep>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Info } from "lucide-react";
 
 type StepStatus = "completed" | "active" | "inactive";
 
@@ -10,6 +10,7 @@ interface StepIndicatorProps {
   size?: "sm" | "md" | "lg";
   layout?: "horizontal" | "vertical";
   className?: string;
+  informationalStep?: boolean;
 }
 
 export function StepIndicator({
@@ -20,6 +21,7 @@ export function StepIndicator({
   size = "md",
   layout = "vertical",
   className = "",
+  informationalStep = false,
 }: StepIndicatorProps) {
   const sizeClasses = {
     sm: "w-8 h-8 text-sm",
@@ -52,6 +54,7 @@ export function StepIndicator({
     return status === "inactive" ? "text-gray-400" : "text-gray-600";
   };
 
+  //TODO: Why claude did it this a mystery; couldn't just use responsive styles? insane.
   if (layout === "horizontal") {
     return (
       <div className={`flex items-center space-x-4 ${className}`}>
@@ -60,6 +63,8 @@ export function StepIndicator({
         >
           {status === "completed" ? (
             <CheckCircle className={iconSizes[size]} />
+          ) : informationalStep ? (
+            <Info className={iconSizes[size]} />
           ) : (
             step
           )}
@@ -81,6 +86,8 @@ export function StepIndicator({
       >
         {status === "completed" ? (
           <CheckCircle className={iconSizes[size]} />
+        ) : informationalStep ? (
+          <Info className={iconSizes[size]} />
         ) : (
           step
         )}
