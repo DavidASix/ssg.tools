@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 
 import getBusinessDetailsSchema from "@/app/api/google/get-business-details/schema";
 import requests from "@/lib/requests";
@@ -22,7 +22,13 @@ import { FrameworkIntegrationTabs } from "./_components/framework-integration-ta
 
 export default function BusinessDetailsPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const businessId = params.id as string;
+
+  // Determine default tab from query param
+  const tabParam = searchParams.get("tab");
+  const validTabs = ["details", "integration"];
+  const defaultTab = validTabs.includes(tabParam ?? "") ? tabParam! : "details";
 
   const businessQuery = useQuery({
     queryKey: ["businessDetails", businessId],
@@ -113,7 +119,7 @@ export default function BusinessDetailsPage() {
       <section className="section section-padding">
         <div className="content">
           <div className="max-w-4xl mx-auto">
-            <Tabs defaultValue="details" className="w-full">
+            <Tabs defaultValue={defaultTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Details & Reviews</TabsTrigger>
                 <TabsTrigger value="integration">Integration</TabsTrigger>
