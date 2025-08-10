@@ -27,7 +27,7 @@ function getToolDescription(toolId: string): string {
 
 function getToolFeatures(toolId: string): string[] {
   const features: Record<string, string[]> = {
-    "google-reviews": [
+    businesses: [
       "Display real customer reviews",
       "Star ratings and review text",
       "Fully static generation - no API calls",
