@@ -78,6 +78,10 @@ Pages must use semantic `<section>` blocks with consistent layout:
 ```
 - When using a section tag you MUST apply section and section-padding first before other styles. These take care of the padding and spacing.
 - When placing a div inside a section tag it MUST have either `content` or `content-wide` class as this takes care of the maximum width.
+- When applying mobile optimization styles, you cannot duplicate components. You should be using conditional rendering based on tailwind breakpoints like this:
+```jsx
+<div className="grid grid-cols-1 md:grid-cols-2"> {/* Some card */} </div>
+```
 
 ## Type-Safe API Request Pattern
 
