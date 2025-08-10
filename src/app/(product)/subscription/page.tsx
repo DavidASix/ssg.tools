@@ -1,12 +1,14 @@
 "use client";
 
+import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Stripe from "stripe";
 
 import checkActiveSubscriptionSchema from "@/app/api/purchases/check-active-subscription/schema";
 import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
+import cancelSubscriptionSchema from "@/app/api/purchases/cancel-subscription/schema";
 import requests from "@/lib/requests";
 
 import { Button } from "@/components/ui/button";
@@ -18,8 +20,22 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function SubscriptionPage() {
+  const [isCancelling, setIsCancelling] = useState(false);
+  const queryClient = useQueryClient();
+
   const subscriptionQuery = useQuery({
     queryKey: ["subscription-status"],
     queryFn: async () => {
@@ -56,6 +72,28 @@ export default function SubscriptionPage() {
     }
   };
 
+  const onCancelSubscription = async () => {
+    setIsCancelling(true);
+    try {
+      const result = await requests.post(cancelSubscriptionSchema, undefined);
+      
+      if (result.success) {
+        toast.success(result.message);
+        // Refresh subscription status to reflect the cancellation
+        await queryClient.invalidateQueries({
+          queryKey: ["subscription-status"],
+        });
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error("Cancel subscription error:", error);
+      toast.error("Failed to cancel subscription. Please try again later.");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
   return (
     <section className="section section-padding">
       <div className="content">
@@ -81,7 +119,7 @@ export default function SubscriptionPage() {
                   <Skeleton className="h-4 w-32" />
                 </div>
               ) : subscriptionQuery.data?.hasActiveSubscription ? (
-                <div className="space-y-2">
+                <div className="space-y-4">
                   <p className="text-lg font-semibold text-green-600">
                     ✅ You have an active subscription
                   </p>
@@ -94,6 +132,32 @@ export default function SubscriptionPage() {
                       days
                     </p>
                   )}
+                  <div className="pt-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="destructive" disabled={isCancelling}>
+                          {isCancelling ? "Cancelling..." : "Cancel Subscription"}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action will cancel your subscription immediately. You will lose access to all paid features, but you can resubscribe at any time.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction 
+                            onClick={onCancelSubscription}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Yes, cancel subscription
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
