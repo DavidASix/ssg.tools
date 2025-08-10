@@ -57,6 +57,7 @@ export default function AddBusinessPage() {
   );
   const [currentStep, setCurrentStep] = useState(1);
   const [businessId, setBusinessId] = useState<number | null>(null);
+  const [reviewsFetched, setReviewsFetched] = useState(false);
 
   const apiKeyQuery = useQuery({
     queryKey: ["apiKey"],
@@ -93,6 +94,7 @@ export default function AddBusinessPage() {
       setReviews(data.reviews);
       setBusinessStats(data.stats);
       setBusinessId(data.business_id);
+      setReviewsFetched(true);
       setCurrentStep(apiKeyQuery.data ? 4 : 3);
     },
     meta: {
@@ -239,7 +241,7 @@ export default function AddBusinessPage() {
                       onClick={fetchReviews}
                       disabled={
                         fetchReviewsMutation.isPending ||
-                        reviews.length > 0 ||
+                        reviewsFetched ||
                         checkBusinessQuery.isFetching ||
                         !!existingBusinessId
                       }
@@ -250,7 +252,7 @@ export default function AddBusinessPage() {
                           <LoadingSpinner size={16} className="mr-2" />
                           Fetching Reviews...
                         </>
-                      ) : reviews.length > 0 ? (
+                      ) : reviewsFetched ? (
                         "✓ Reviews Fetched"
                       ) : (
                         "Fetch Reviews"
@@ -260,30 +262,50 @@ export default function AddBusinessPage() {
                     {fetchReviewsMutation.isPending &&
                       [1, 2, 3].map((i) => <ReviewSkeleton key={i} />)}
 
-                    {reviews.length > 0 && (
+                    {reviewsFetched && (
                       <>
-                        <div className="p-3 bg-green-50 border border-green-200 rounded-md">
-                          {businessStats && (
-                            <div className="mt-2 text-sm text-green-700">
-                              <p>Total Reviews: {businessStats.review_count}</p>
-                              <p>
-                                Average Rating: {businessStats.review_score}/5
-                              </p>
+                        {reviews.length > 0 ? (
+                          <>
+                            <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+                              {businessStats && (
+                                <div className="mt-2 text-sm text-green-700">
+                                  <p>Total Reviews: {businessStats.review_count}</p>
+                                  <p>
+                                    Average Rating: {businessStats.review_score}/5
+                                  </p>
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
-                        <p className="text-sm font-semibold text-gray-800">
-                          {Math.min(reviews.length, 5)} recent reviews:
-                        </p>
-                        {reviews.slice(0, 5).map((review, index) => (
-                          <ReviewCard
-                            key={index}
-                            author={review.author_name || "Anonymous"}
-                            rating={review.rating || 0}
-                            text={review.comments || "No comment"}
-                            date={review.datetime}
-                          />
-                        ))}
+                            <p className="text-sm font-semibold text-gray-800">
+                              {Math.min(reviews.length, 5)} recent reviews:
+                            </p>
+                            {reviews.slice(0, 5).map((review, index) => (
+                              <ReviewCard
+                                key={index}
+                                author={review.author_name || "Anonymous"}
+                                rating={review.rating || 0}
+                                text={review.comments || "No comment"}
+                                date={review.datetime}
+                              />
+                            ))}
+                          </>
+                        ) : (
+                          <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
+                            <p className="text-sm text-blue-800">
+                              No reviews found for this business. You can still proceed to set up monitoring for future reviews.
+                            </p>
+                            {businessStats && (
+                              <div className="mt-2 text-sm text-blue-700">
+                                <p>Total Reviews: {businessStats.review_count || 0}</p>
+                                {businessStats.review_score && (
+                                  <p>
+                                    Average Rating: {businessStats.review_score}/5
+                                  </p>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </>
                     )}
                   </div>
