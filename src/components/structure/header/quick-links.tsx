@@ -23,16 +23,16 @@ function IconBase({
 
 function DashboardIcon({ className }: { className?: string }) {
   return (
-    <IconBase className={"bg-red-400"}>
-      <House className={className} />
+    <IconBase className={"bg-gradient-to-br from-yellow-200 to-yellow-700"}>
+      <House className={cn("text-yellow-50", className)} />
     </IconBase>
   );
 }
 
 function BusinessesIcon({ className }: { className?: string }) {
   return (
-    <IconBase className={"bg-blue-400"}>
-      <Building2 className={className} />
+    <IconBase className={"bg-gradient-to-br from-amber-200 to-amber-700"}>
+      <Building2 className={cn("text-amber-50", className)} />
     </IconBase>
   );
 }
