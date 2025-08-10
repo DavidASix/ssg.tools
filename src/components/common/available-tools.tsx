@@ -9,7 +9,7 @@ import {
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { applications } from "@/components/structure/header/applications";
+import { applications } from "@/components/structure/header/quick-links";
 
 // Helper functions for tool metadata
 function getToolDescription(toolId: string): string {
