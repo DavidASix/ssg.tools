@@ -76,7 +76,7 @@ export default function SubscriptionPage() {
     setIsCancelling(true);
     try {
       const result = await requests.post(cancelSubscriptionSchema, undefined);
-      
+
       if (result.success) {
         toast.success(result.message);
         // Refresh subscription status to reflect the cancellation
@@ -136,19 +136,23 @@ export default function SubscriptionPage() {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="destructive" disabled={isCancelling}>
-                          {isCancelling ? "Cancelling..." : "Cancel Subscription"}
+                          {isCancelling
+                            ? "Cancelling..."
+                            : "Cancel Subscription"}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
                           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action will cancel your subscription immediately. You will lose access to all paid features, but you can resubscribe at any time.
+                            This action will cancel your subscription
+                            immediately. You will lose access to all paid
+                            features, but you can resubscribe at any time.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction 
+                          <AlertDialogAction
                             onClick={onCancelSubscription}
                             className="bg-red-600 hover:bg-red-700"
                           >
