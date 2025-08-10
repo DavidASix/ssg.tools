@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { House, Star, WandSparkles } from "lucide-react";
+import { House, Building2 } from "lucide-react";
 import React from "react";
 
 function IconBase({
@@ -21,7 +21,7 @@ function IconBase({
   );
 }
 
-function HomeIcon({ className }: { className?: string }) {
+function DashboardIcon({ className }: { className?: string }) {
   return (
     <IconBase className={"bg-red-400"}>
       <House className={className} />
@@ -29,18 +29,10 @@ function HomeIcon({ className }: { className?: string }) {
   );
 }
 
-function GoogleReviewsIcon({ className }: { className?: string }) {
+function BusinessesIcon({ className }: { className?: string }) {
   return (
     <IconBase className={"bg-blue-400"}>
-      <Star className={className} />
-    </IconBase>
-  );
-}
-
-function BlogGeneratorIcon({ className }: { className?: string }) {
-  return (
-    <IconBase className={"bg-yellow-400"}>
-      <WandSparkles className={className} />
+      <Building2 className={className} />
     </IconBase>
   );
 }
@@ -48,20 +40,14 @@ function BlogGeneratorIcon({ className }: { className?: string }) {
 export const applications = [
   {
     id: "dashboard",
-    name: "Home",
+    name: "Dashboard",
     url: "/",
-    icon: HomeIcon,
+    icon: DashboardIcon,
   },
   {
-    id: "google-reviews",
-    name: "Google Reviews",
+    id: "businesses",
+    name: "Businesses",
     url: "/google-reviews",
-    icon: GoogleReviewsIcon,
-  },
-  {
-    id: "blog-generator",
-    name: "Blog Generator",
-    url: "/blog-generator",
-    icon: BlogGeneratorIcon,
+    icon: BusinessesIcon,
   },
 ];
