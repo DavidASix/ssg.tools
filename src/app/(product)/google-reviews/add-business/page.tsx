@@ -269,9 +269,12 @@ export default function AddBusinessPage() {
                             <div className="p-3 bg-green-50 border border-green-200 rounded-md">
                               {businessStats && (
                                 <div className="mt-2 text-sm text-green-700">
-                                  <p>Total Reviews: {businessStats.review_count}</p>
                                   <p>
-                                    Average Rating: {businessStats.review_score}/5
+                                    Total Reviews: {businessStats.review_count}
+                                  </p>
+                                  <p>
+                                    Average Rating: {businessStats.review_score}
+                                    /5
                                   </p>
                                 </div>
                               )}
@@ -292,14 +295,19 @@ export default function AddBusinessPage() {
                         ) : (
                           <div className="p-3 bg-blue-50 border border-blue-200 rounded-md">
                             <p className="text-sm text-blue-800">
-                              No reviews found for this business. You can still proceed to set up monitoring for future reviews.
+                              No reviews found for this business. You can still
+                              proceed to set up monitoring for future reviews.
                             </p>
                             {businessStats && (
                               <div className="mt-2 text-sm text-blue-700">
-                                <p>Total Reviews: {businessStats.review_count || 0}</p>
+                                <p>
+                                  Total Reviews:{" "}
+                                  {businessStats.review_count || 0}
+                                </p>
                                 {businessStats.review_score && (
                                   <p>
-                                    Average Rating: {businessStats.review_score}/5
+                                    Average Rating: {businessStats.review_score}
+                                    /5
                                   </p>
                                 )}
                               </div>
