@@ -14,7 +14,7 @@ import { applications } from "@/components/structure/header/quick-links";
 // Helper functions for tool metadata
 function getToolDescription(toolId: string): string {
   const descriptions: Record<string, string> = {
-    "google-reviews":
+    businesses:
       "Integrate Google Reviews seamlessly into your static site without client-side API calls.",
     "blog-generator":
       "Generate SEO-optimized blog content with AI to keep your site fresh and engaging.",
