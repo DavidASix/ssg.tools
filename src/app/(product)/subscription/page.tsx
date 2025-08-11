@@ -4,14 +4,12 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Stripe from "stripe";
-import { Loader2 } from "lucide-react";
 
 import checkActiveSubscriptionSchema from "@/app/api/purchases/check-active-subscription/schema";
 import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
 import cancelSubscriptionSchema from "@/app/api/purchases/cancel-subscription/schema";
 import requests from "@/lib/requests";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,18 +17,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+
+import { SubscriptionState } from "./_components/subscription-state";
 
 export default function SubscriptionPage() {
   const queryClient = useQueryClient();
@@ -44,13 +32,6 @@ export default function SubscriptionPage() {
       errorMessage: "Failed to fetch subscription status",
     },
   });
-
-  const calculateDaysRemaining = (subscriptionEnd: Date) => {
-    const now = new Date();
-    const diffTime = subscriptionEnd.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
-  };
 
   const onClickCheckout = async () => {
     try {
@@ -111,82 +92,18 @@ export default function SubscriptionPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {subscriptionQuery.isLoading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-48" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-              ) : subscriptionQuery.data?.hasActiveSubscription ? (
-                <div className="space-y-4">
-                  <p className="text-lg font-semibold text-green-600">
-                    ✅ You have an active subscription
-                  </p>
-                  {subscriptionQuery.data.subscriptionEnd && (
-                    <p className="text-sm text-muted-foreground">
-                      Days remaining:{" "}
-                      {calculateDaysRemaining(
-                        subscriptionQuery.data.subscriptionEnd,
-                      )}{" "}
-                      days
-                    </p>
-                  )}
-                  <div className="pt-2">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="destructive"
-                          disabled={cancelSubscriptionMutation.isPending}
-                        >
-                          {cancelSubscriptionMutation.isPending ? (
-                            <>
-                              Cancelling...
-                              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                            </>
-                          ) : (
-                            "Cancel Subscription"
-                          )}
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Your subscription will be cancelled as of{" "}
-                            {subscriptionQuery.data.subscriptionEnd
-                              ?.toISOString()
-                              .slice(0, 10)}
-                            . You will not be charged again, but your review
-                            integrations will no longer work after that day.
-                            <br />
-                            You may re-subscribe at any time.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => cancelSubscriptionMutation.mutate()}
-                            className="bg-red-600 hover:bg-red-700"
-                          >
-                            Yes, cancel subscription
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-lg font-semibold text-red-600">
-                    ❌ You do not have an active subscription
-                  </p>
-                  <p className="text-muted-foreground">
-                    Get unlimited access to all tools with your subscription
-                  </p>
-                  <Button size="lg" onClick={onClickCheckout}>
-                    Subscribe Now
-                  </Button>
-                </div>
-              )}
+              <SubscriptionState
+                dataIsLoading={subscriptionQuery.isLoading}
+                cancelIsLoading={cancelSubscriptionMutation.isPending}
+                hasActiveSubscription={
+                  subscriptionQuery.data?.hasActiveSubscription ?? false
+                }
+                endDate={subscriptionQuery.data?.subscriptionEnd}
+                onClickCheckout={onClickCheckout}
+                onClickCancel={() => {
+                  cancelSubscriptionMutation.mutate();
+                }}
+              />
             </CardContent>
           </Card>
         </div>
