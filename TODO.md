@@ -10,6 +10,7 @@
 - [ ] Add integration testing
 - [x] Add cancel subscription option
 - [ ] Add API limits & API limiting middleware
+- [ ] Add withPayment middleware 
 
 # Future Updates
 - [ ] Add business logos
