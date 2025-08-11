@@ -2,6 +2,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 import insertNewBusinessSchema from "@/app/api/google/insert-new-business/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
@@ -94,6 +95,10 @@ export default function AddBusinessPage() {
       setBusinessStats(data.stats);
       setBusinessId(data.business_id);
       setCurrentStep(apiKeyQuery.data ? 4 : 3);
+    },
+    onError: (error) => {
+      console.error("Error fetching reviews:", error);
+      toast.error("Failed to fetch reviews. Please try again.");
     },
     meta: {
       errorMessage: "Failed to fetch reviews",
