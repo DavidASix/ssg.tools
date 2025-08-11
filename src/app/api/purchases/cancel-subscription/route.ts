@@ -75,6 +75,12 @@ export const POST: RequestHandler<NextRouteContext> = withAuth(
       // Cancel all active subscriptions
       const cancelledCount = await cancelAllSubscriptions(subscriptions.data);
 
+      // Update user's has_active_subscription flag
+      await db
+        .update(users)
+        .set({ has_active_subscription: false })
+        .where(eq(users.id, user_id));
+
       const response = schema.response.parse({
         success: true,
         message: `Successfully cancelled ${cancelledCount} subscription(s)`,

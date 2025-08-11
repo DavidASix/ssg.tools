@@ -52,7 +52,7 @@ const handleCheckoutSessionCompleted: Handler = async ({ type, data }) => {
     // Update the user record with their Stripe customer ID
     await db
       .update(users)
-      .set({ stripe_customer_id: customerId })
+      .set({ stripe_customer_id: customerId, has_active_subscription: true })
       .where(eq(users.id, appUserId));
   } catch (error) {
     throw error;
@@ -131,6 +131,12 @@ const handleInvoicePaymentSucceeded: Handler = async ({ type, data }) => {
     };
 
     await db.insert(subscription_payments).values(insertData);
+
+    // Update user's has_active_subscription flag
+    await db
+      .update(users)
+      .set({ has_active_subscription: true })
+      .where(eq(users.id, userId));
   } catch (error) {
     throw error;
   }
