@@ -9,17 +9,11 @@ import { withAuth } from "@/middleware/withAuth";
 import { api_keys } from "@/schema/schema";
 import { db } from "@/schema/db";
 import { generateApiKey } from "@/lib/server/api-keys";
-import { withSubscriptionDetails } from "@/middleware/withSubscriptionDetails";
+import { withPaidAccess } from "@/middleware/withPaidAccess";
 
 export const GET: RequestHandler<NextRouteContext> = withAuth(
-  withSubscriptionDetails(async (_, context) => {
-    const { user_id, subscription } = context;
-    if (!subscription.hasActiveSubscription) {
-      return NextResponse.json(
-        { error: "Active subscription required" },
-        { status: 403 },
-      );
-    }
+  withPaidAccess(async (_, context) => {
+    const { user_id } = context;
     try {
       await db
         .update(api_keys)
