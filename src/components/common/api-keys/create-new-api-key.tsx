@@ -12,7 +12,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import checkActiveSubscriptionSchema from "@/app/api/purchases/check-active-subscription/schema";
+import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
 import createApiKeySchema from "@/app/api/security/create-api-key/schema";
 import getLatestActiveKeySchema from "@/app/api/security/get-latest-active-key/schema";
 import requests from "@/lib/requests";
@@ -92,7 +92,7 @@ export default function CreateNewApiKey({
   const subscriptionQuery = useQuery({
     queryKey: ["activeSubscription"],
     queryFn: async () => {
-      return await requests.get(checkActiveSubscriptionSchema);
+      return await requests.get(getSubscriptionDetailsSchema);
     },
     meta: {
       errorMessage: "Failed to check subscription status",
