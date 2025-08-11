@@ -9,7 +9,9 @@ vi.mock("@/lib/server/events", () => ({
   recordEvent: vi.fn(),
 }));
 
-const { countEventsInTimeWindow, recordEvent } = await import("@/lib/server/events");
+const { countEventsInTimeWindow, recordEvent } = await import(
+  "@/lib/server/events"
+);
 const mockedCountEventsInTimeWindow = vi.mocked(countEventsInTimeWindow);
 const mockedRecordEvent = vi.mocked(recordEvent);
 
@@ -25,8 +27,8 @@ describe("withEventRateLimit middleware", () => {
 
   const mockRequest = new NextRequest("http://localhost:3000/api/test");
 
-  const mockHandler: RequestHandler<typeof mockContext> = vi.fn(
-    async () => NextResponse.json({ success: true }),
+  const mockHandler: RequestHandler<typeof mockContext> = vi.fn(async () =>
+    NextResponse.json({ success: true }),
   );
 
   it("should allow request when under rate limit", async () => {
@@ -98,10 +100,10 @@ describe("withEventRateLimit middleware", () => {
   it("should not record event when handler returns error status", async () => {
     // Mock that user has made 2 calls (under the limit)
     mockedCountEventsInTimeWindow.mockResolvedValue(2);
-    
+
     // Create a handler that returns an error
-    const errorHandler: RequestHandler<typeof mockContext> = vi.fn(
-      async () => NextResponse.json({ error: "Bad request" }, { status: 400 }),
+    const errorHandler: RequestHandler<typeof mockContext> = vi.fn(async () =>
+      NextResponse.json({ error: "Bad request" }, { status: 400 }),
     );
 
     const rateLimitedHandler = withEventRateLimit(
@@ -148,7 +150,9 @@ describe("withEventRateLimit middleware", () => {
 
   it("should handle database errors gracefully", async () => {
     // Mock database error
-    mockedCountEventsInTimeWindow.mockRejectedValue(new Error("Database error"));
+    mockedCountEventsInTimeWindow.mockRejectedValue(
+      new Error("Database error"),
+    );
 
     const rateLimitedHandler = withEventRateLimit(
       {

@@ -17,16 +17,16 @@ export interface EventRateLimitConfig {
  * Middleware wrapper that implements rate limiting based on event tracking.
  * Checks if a user has exceeded the allowed number of calls for a specific event
  * within a given time window and rejects the request if the limit is exceeded.
- * 
+ *
  * This middleware requires that the context includes a user_id property, so it should
  * be used with either withAuth or withApiKey middleware.
- * 
+ *
  * @param config - Rate limiting configuration
  * @param config.event - The event type to track and limit
  * @param config.maxCalls - Maximum number of calls allowed within the time window
  * @param config.timeWindowHours - Time window in hours to check for rate limiting
  * @param config.metadata - Optional metadata to record with the event
- * 
+ *
  * @example
  * ```typescript
  * export const POST: RequestHandler<NextRouteContext> = withApiKey(

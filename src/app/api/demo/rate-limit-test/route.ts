@@ -9,11 +9,11 @@ import { countEventsInTimeWindow } from "@/lib/server/events";
 /**
  * Demo endpoint showing multiple rate limits on a single endpoint.
  * This demonstrates the capability to chain multiple withEventRateLimit middlewares.
- * 
+ *
  * Rate limits:
  * - fetch_reviews: 10 calls per 24 hours
  * - update_reviews: 3 calls per 24 hours
- * 
+ *
  * This endpoint will be rejected if either rate limit is exceeded.
  */
 export const GET: RequestHandler<NextRouteContext> = withApiKey(
