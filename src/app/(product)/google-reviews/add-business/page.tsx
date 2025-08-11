@@ -302,7 +302,7 @@ export default function AddBusinessPage() {
                               <div className="mt-2 text-sm text-blue-700">
                                 <p>
                                   Total Reviews:{" "}
-                                  {businessStats.review_count || 0}
+                                  {businessStats.review_count ?? 0}
                                 </p>
                                 {businessStats.review_score && (
                                   <p>
