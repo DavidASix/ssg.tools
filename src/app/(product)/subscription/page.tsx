@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -33,7 +32,6 @@ import {
 } from "@/components/ui/alert-dialog";
 
 export default function SubscriptionPage() {
-  const [isCancelling, setIsCancelling] = useState(false);
   const queryClient = useQueryClient();
 
   const subscriptionQuery = useQuery({
@@ -73,7 +71,6 @@ export default function SubscriptionPage() {
   };
 
   const onCancelSubscription = async () => {
-    setIsCancelling(true);
     try {
       const result = await requests.post(cancelSubscriptionSchema, undefined);
 
@@ -89,8 +86,6 @@ export default function SubscriptionPage() {
     } catch (error) {
       console.error("Cancel subscription error:", error);
       toast.error("Failed to cancel subscription. Please try again later.");
-    } finally {
-      setIsCancelling(false);
     }
   };
 
@@ -135,10 +130,8 @@ export default function SubscriptionPage() {
                   <div className="pt-2">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="destructive" disabled={isCancelling}>
-                          {isCancelling
-                            ? "Cancelling..."
-                            : "Cancel Subscription"}
+                        <Button variant="destructive">
+                          Cancel Subscription
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
