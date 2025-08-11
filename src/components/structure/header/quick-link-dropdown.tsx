@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/custom/loading-spinner";
 import Link from "next/link";
-import { applications } from "./applications";
+import { applications } from "./quick-links";
 
 import {
   DropdownMenu,
@@ -23,7 +23,7 @@ const HeaderText = () => {
   );
 };
 
-export default function ApplicationSwitcher({ noAuth }: { noAuth?: boolean }) {
+export default function QuickLinkDropdown({ noAuth }: { noAuth?: boolean }) {
   const session = useSession();
 
   if (session.status === "unauthenticated" || noAuth) {

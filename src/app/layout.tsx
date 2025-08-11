@@ -4,6 +4,9 @@ import { SessionProvider } from "next-auth/react";
 import HolyLoader from "holy-loader";
 
 import { Toaster } from "@/components/ui/sonner";
+import { DEFAULT_METADATA } from "@/lib/metadata";
+
+export const metadata = DEFAULT_METADATA;
 
 export default function RootLayout({
   children,

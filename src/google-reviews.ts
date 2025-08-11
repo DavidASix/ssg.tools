@@ -93,7 +93,7 @@ const BusinessSchema = z.object({
   longitude: z.number(),
   full_address: z.string(),
   review_count: z.number(),
-  rating: z.number(),
+  rating: z.number().nullable(),
   timezone: z.string().nullable(),
   opening_status: z.string().nullable(),
   working_hours: z.record(z.string(), z.array(z.string())).nullable(),

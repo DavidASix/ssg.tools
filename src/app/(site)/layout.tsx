@@ -1,16 +1,9 @@
 import { redirect } from "next/navigation";
-import type { Metadata } from "next";
 
 import Navigation from "@/components/structure/header/navigation";
 import Footer from "@/components/structure/footer";
 
 import { auth } from "~/auth";
-
-export async function generateMetadata(): Promise<Metadata> {
-  return {
-    title: "Google Reviews for Developers",
-  };
-}
 
 export default async function SiteLayout({
   children,

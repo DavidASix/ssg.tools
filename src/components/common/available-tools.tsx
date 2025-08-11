@@ -9,12 +9,12 @@ import {
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { applications } from "@/components/structure/header/applications";
+import { applications } from "@/components/structure/header/quick-links";
 
 // Helper functions for tool metadata
 function getToolDescription(toolId: string): string {
   const descriptions: Record<string, string> = {
-    "google-reviews":
+    businesses:
       "Integrate Google Reviews seamlessly into your static site without client-side API calls.",
     "blog-generator":
       "Generate SEO-optimized blog content with AI to keep your site fresh and engaging.",
@@ -27,7 +27,7 @@ function getToolDescription(toolId: string): string {
 
 function getToolFeatures(toolId: string): string[] {
   const features: Record<string, string[]> = {
-    "google-reviews": [
+    businesses: [
       "Display real customer reviews",
       "Star ratings and review text",
       "Fully static generation - no API calls",
