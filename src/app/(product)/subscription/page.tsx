@@ -145,9 +145,14 @@ export default function SubscriptionPage() {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This action will cancel your subscription
-                            immediately. You will lose access to all paid
-                            features, but you can resubscribe at any time.
+                            Your subscription will be cancelled as of{" "}
+                            {subscriptionQuery.data.subscriptionEnd
+                              ?.toISOString()
+                              .slice(0, 10)}
+                            . You will not be charged again, but your review
+                            integrations will no longer work after that day.
+                            <br />
+                            You may re-subscribe at any time.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
