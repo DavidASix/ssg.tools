@@ -37,7 +37,7 @@ type ActiveSubscriptionContext = {
  * );
  * ```
  */
-export function withActiveSubscription<
+export function withSubscriptionDetails<
   T extends object & {
     subscription?: never;
   },

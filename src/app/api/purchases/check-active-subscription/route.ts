@@ -3,7 +3,7 @@ import "server-only";
 import { NextResponse } from "next/server";
 
 import { NextRouteContext, RequestHandler } from "@/middleware/types";
-import { withActiveSubscription } from "@/middleware/withActiveSubscription";
+import { withSubscriptionDetails } from "@/middleware/withSubscriptionDetails";
 import { withAuth } from "@/middleware/withAuth";
 import schema from "./schema";
 
@@ -14,7 +14,7 @@ import schema from "./schema";
  * if the current user has a valid, active subscription
  */
 export const GET: RequestHandler<NextRouteContext> = withAuth(
-  withActiveSubscription(async (_, context) => {
+  withSubscriptionDetails(async (_, context) => {
     try {
       const { hasActiveSubscription, subscriptionEnd } = context.subscription;
 

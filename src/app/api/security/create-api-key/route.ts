@@ -9,10 +9,10 @@ import { withAuth } from "@/middleware/withAuth";
 import { api_keys } from "@/schema/schema";
 import { db } from "@/schema/db";
 import { generateApiKey } from "@/lib/server/api-keys";
-import { withActiveSubscription } from "@/middleware/withActiveSubscription";
+import { withSubscriptionDetails } from "@/middleware/withSubscriptionDetails";
 
 export const GET: RequestHandler<NextRouteContext> = withAuth(
-  withActiveSubscription(async (_, context) => {
+  withSubscriptionDetails(async (_, context) => {
     const { user_id, subscription } = context;
     if (!subscription.hasActiveSubscription) {
       return NextResponse.json(
