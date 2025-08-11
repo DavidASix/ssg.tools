@@ -8,9 +8,11 @@
 - [ ] Rebrand to bragfeed.dev
 - [ ] Revise dashboard to show summary of usage
 - [ ] Add integration testing
-- [ ] Add cancel subscription option
+- [x] Add cancel subscription option
 - [ ] Add API limits & API limiting middleware
+- [ ] Add withPayment middleware 
 
 # Future Updates
 - [ ] Add business logos
 - [ ] Business delete options
+- [ ] Add subscription cancellation flag to user account for UI nudging to re-subscribe

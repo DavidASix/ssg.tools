@@ -30,6 +30,14 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   stripe_customer_id: text("stripe_customer_id").unique(),
+  /**
+   * Indicates if the user has a subscription which will "re-bill". A user could have cancelled their
+   * subscription (this value becomes false) but still have N days left in their subscription period,
+   * and thus still have access to the product.
+   */
+  has_active_subscription: boolean("has_active_subscription")
+    .notNull()
+    .default(false),
 });
 
 export const accounts = pgTable(

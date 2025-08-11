@@ -1,15 +1,15 @@
 "use client";
 
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Stripe from "stripe";
 
-import checkActiveSubscriptionSchema from "@/app/api/purchases/check-active-subscription/schema";
+import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
 import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
+import cancelSubscriptionSchema from "@/app/api/purchases/cancel-subscription/schema";
 import requests from "@/lib/requests";
 
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -17,25 +17,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+
+import { SubscriptionState } from "./_components/subscription-state";
 
 export default function SubscriptionPage() {
+  const queryClient = useQueryClient();
+
   const subscriptionQuery = useQuery({
     queryKey: ["subscription-status"],
     queryFn: async () => {
-      return await requests.get(checkActiveSubscriptionSchema);
+      return await requests.get(getSubscriptionDetailsSchema);
     },
     meta: {
       errorMessage: "Failed to fetch subscription status",
     },
   });
-
-  const calculateDaysRemaining = (subscriptionEnd: Date) => {
-    const now = new Date();
-    const diffTime = subscriptionEnd.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return Math.max(0, diffDays);
-  };
 
   const onClickCheckout = async () => {
     try {
@@ -56,6 +52,27 @@ export default function SubscriptionPage() {
     }
   };
 
+  const cancelSubscriptionMutation = useMutation({
+    mutationFn: async () => {
+      return await requests.post(cancelSubscriptionSchema, undefined);
+    },
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success(result.message);
+        // Refresh subscription status to reflect the cancellation
+        queryClient.invalidateQueries({
+          queryKey: ["subscription-status"],
+        });
+      } else {
+        toast.error(result.message);
+      }
+    },
+    onError: (error) => {
+      console.error("Cancel subscription error:", error);
+      toast.error("Failed to cancel subscription. Please try again later.");
+    },
+  });
+
   return (
     <section className="section section-padding">
       <div className="content">
@@ -75,39 +92,18 @@ export default function SubscriptionPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {subscriptionQuery.isLoading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-48" />
-                  <Skeleton className="h-4 w-32" />
-                </div>
-              ) : subscriptionQuery.data?.hasActiveSubscription ? (
-                <div className="space-y-2">
-                  <p className="text-lg font-semibold text-green-600">
-                    ✅ You have an active subscription
-                  </p>
-                  {subscriptionQuery.data.subscriptionEnd && (
-                    <p className="text-sm text-muted-foreground">
-                      Days remaining:{" "}
-                      {calculateDaysRemaining(
-                        subscriptionQuery.data.subscriptionEnd,
-                      )}{" "}
-                      days
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-lg font-semibold text-red-600">
-                    ❌ You do not have an active subscription
-                  </p>
-                  <p className="text-muted-foreground">
-                    Get unlimited access to all tools with your subscription
-                  </p>
-                  <Button size="lg" onClick={onClickCheckout}>
-                    Subscribe Now
-                  </Button>
-                </div>
-              )}
+              <SubscriptionState
+                dataIsLoading={subscriptionQuery.isLoading}
+                cancelIsLoading={cancelSubscriptionMutation.isPending}
+                hasActiveSubscription={
+                  subscriptionQuery.data?.hasActiveSubscription ?? false
+                }
+                endDate={subscriptionQuery.data?.subscriptionEnd}
+                onClickCheckout={onClickCheckout}
+                onClickCancel={() => {
+                  cancelSubscriptionMutation.mutate();
+                }}
+              />
             </CardContent>
           </Card>
         </div>
