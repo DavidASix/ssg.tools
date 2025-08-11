@@ -1,4 +1,4 @@
-import { subscription_payments } from "@/schema/schema";
+import { subscription_payments, users } from "@/schema/schema";
 import { and, eq, gte, lte, desc } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -9,28 +9,28 @@ import { RequestHandler } from "./types";
 type ActiveSubscriptionContext = {
   subscription: {
     hasActiveSubscription: boolean;
+    subscriptionStart?: Date;
     subscriptionEnd?: Date;
   };
 };
 
 /**
- * Middleware wrapper to check if the user has an active subscription.
+ * Middleware wrapper to check the details of a users subscription.
  * This middleware assumes that withAuth or withApiKey has been called first
  * to provide the user_id in the context.
  *
- * It checks the subscription_payments table for any record where the current
- * date falls between subscription_start and subscription_end (inclusive).
+ * A user can have a subscription start and end date while having a `hasActiveSubscription`
+ * value of false; more details in the users table.
  *
  * @example
  * ```typescript
- * export const GET: RequestHandler<NextRouteContext> = withActiveSubscription(
+ * export const GET: RequestHandler<NextRouteContext> = withSubscriptionDetails(
  *   async (_, context) => {
  *     const { hasActiveSubscription, subscriptionEnd } = context.subscription;
- *     if (!hasActiveSubscription) {
- *       return NextResponse.json({ error: "Active subscription required" }, { status: 403 });
+ *     if (!hasActiveSubscription && new Date() < subscriptionEnd) {
+ *       // User has a paid subscription which will not re-bill
  *     }
  *     return NextResponse.json({
- *       message: "Access granted!",
  *       expiresAt: subscriptionEnd
  *     });
  *   }
@@ -55,8 +55,9 @@ export function withSubscriptionDetails<
 
       // Query for active subscription where current time is between start and end dates
       // Using timezone-aware comparison since our timestamps include timezone info
-      const [activeSubscription] = await db
+      const [subscriptionDetails] = await db
         .select({
+          subscription_start: subscription_payments.subscription_start,
           subscription_end: subscription_payments.subscription_end,
         })
         .from(subscription_payments)
@@ -70,13 +71,21 @@ export function withSubscriptionDetails<
         .orderBy(desc(subscription_payments.subscription_end))
         .limit(1);
 
-      const hasActiveSubscription = !!activeSubscription;
-      const subscriptionEnd = activeSubscription?.subscription_end;
+      const [user] = await db
+        .select({
+          hasActiveSubscription: users.has_active_subscription,
+        })
+        .from(users)
+        .where(eq(users.id, userId));
+
+      const subscriptionEnd = subscriptionDetails?.subscription_end;
+      const subscriptionStart = subscriptionDetails?.subscription_start;
 
       const newContext = {
         ...context,
         subscription: {
-          hasActiveSubscription,
+          hasActiveSubscription: user.hasActiveSubscription,
+          subscriptionStart,
           subscriptionEnd,
         },
       };
