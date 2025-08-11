@@ -16,10 +16,12 @@ import schema from "./schema";
 export const GET: RequestHandler<NextRouteContext> = withAuth(
   withSubscriptionDetails(async (_, context) => {
     try {
-      const { hasActiveSubscription, subscriptionEnd } = context.subscription;
+      const { hasActiveSubscription, subscriptionStart, subscriptionEnd } =
+        context.subscription;
 
       const response = schema.response.parse({
         hasActiveSubscription,
+        subscriptionStart: subscriptionStart?.toISOString(),
         subscriptionEnd: subscriptionEnd?.toISOString(),
       });
 
