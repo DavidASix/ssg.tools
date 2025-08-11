@@ -5,7 +5,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Stripe from "stripe";
 
-import checkActiveSubscriptionSchema from "@/app/api/purchases/check-active-subscription/schema";
+import getSubscriptionDetailsSchema from "@/app/api/purchases/get-subscription-details/schema";
 import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
 import cancelSubscriptionSchema from "@/app/api/purchases/cancel-subscription/schema";
 import requests from "@/lib/requests";
@@ -26,7 +26,7 @@ export default function SubscriptionPage() {
   const subscriptionQuery = useQuery({
     queryKey: ["subscription-status"],
     queryFn: async () => {
-      return await requests.get(checkActiveSubscriptionSchema);
+      return await requests.get(getSubscriptionDetailsSchema);
     },
     meta: {
       errorMessage: "Failed to fetch subscription status",

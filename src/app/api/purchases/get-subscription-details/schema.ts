@@ -2,7 +2,7 @@ import { z } from "zod";
 import { stringDate, type APISchema } from "@/schema/types";
 
 const schema = {
-  url: "/api/purchases/check-active-subscription",
+  url: "/api/purchases/get-subscription-details",
   request: z.undefined(),
   response: z.object({
     hasActiveSubscription: z.boolean(),
