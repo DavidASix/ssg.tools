@@ -1,9 +1,10 @@
 "use client";
 
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Stripe from "stripe";
+import { Loader2 } from "lucide-react";
 
 import checkActiveSubscriptionSchema from "@/app/api/purchases/check-active-subscription/schema";
 import checkoutContextSchema from "@/app/api/purchases/initialize-checkout/schema";
@@ -70,24 +71,26 @@ export default function SubscriptionPage() {
     }
   };
 
-  const onCancelSubscription = async () => {
-    try {
-      const result = await requests.post(cancelSubscriptionSchema, undefined);
-
+  const cancelSubscriptionMutation = useMutation({
+    mutationFn: async () => {
+      return await requests.post(cancelSubscriptionSchema, undefined);
+    },
+    onSuccess: (result) => {
       if (result.success) {
         toast.success(result.message);
         // Refresh subscription status to reflect the cancellation
-        await queryClient.invalidateQueries({
+        queryClient.invalidateQueries({
           queryKey: ["subscription-status"],
         });
       } else {
         toast.error(result.message);
       }
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("Cancel subscription error:", error);
       toast.error("Failed to cancel subscription. Please try again later.");
-    }
-  };
+    },
+  });
 
   return (
     <section className="section section-padding">
@@ -130,8 +133,18 @@ export default function SubscriptionPage() {
                   <div className="pt-2">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="destructive">
-                          Cancel Subscription
+                        <Button
+                          variant="destructive"
+                          disabled={cancelSubscriptionMutation.isPending}
+                        >
+                          {cancelSubscriptionMutation.isPending ? (
+                            <>
+                              Cancelling...
+                              <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                            </>
+                          ) : (
+                            "Cancel Subscription"
+                          )}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -151,7 +164,7 @@ export default function SubscriptionPage() {
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={onCancelSubscription}
+                            onClick={() => cancelSubscriptionMutation.mutate()}
                             className="bg-red-600 hover:bg-red-700"
                           >
                             Yes, cancel subscription
