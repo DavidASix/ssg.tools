@@ -1,10 +1,10 @@
-# SSG.tools
+# Bragfeed.dev
 Do you build static sites for your clients, but struggle to integrate Google Reviews into your static setup? Your solution is right here!
 
 - **What is this?**
 	- A SaaS which provides an easy way to integration Google Reviews for your business into a statically generated website. 
 - **What's the value?**
-	- Google makes it difficult to display your Google Reviews on your website, and there is no solution online to use your active Google reviews as a data source for static site generation. You can point to this software as a datasource for your statically generated site, so that each time your site is re-built, your Google Reviews re-fetch and update, serving statically on your site.
+	- Google makes it difficult to display your Google Reviews on your website, and there is no solution online to use your active Google reviews as a data source for static site generation. You can point to this software as a data-source for your statically generated site, so that each time your site is re-built, your Google Reviews re-fetch and update, serving statically on your site.
 - **Target Users?**
 	- Web developers who design websites for small and local businesses. People who design statically generated websites can implement this tool to have their clients reviews show on the websites they build.
 
