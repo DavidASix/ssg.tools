@@ -9,6 +9,19 @@ Do you build static sites for your clients, but struggle to integrate Google Rev
 	- Web developers who design websites for small and local businesses. People who design statically generated websites can implement this tool to have their clients reviews show on the websites they build.
 
 
+## Deployment Procedure
+
+All deployments to `main` must first be opened as a pull request targeting the `staging` branch for review. Use `staging` to validate changes in a realistic environment before anything reaches `main`.
+
+- PRs targeting `staging` must pass CI checks before they can be merged.
+- Every deployment to `main` must be reviewed and approved by the repository code owner and reviewed by Copilot.
+- If your changes include a Drizzle migration flag it as such as, the production database migration action will need to be run during the merge process:
+
+```bash
+npm run db:production:migrate
+```
+
+
 ## Request Middleware System
 
 This project uses a composable middleware system that allows you to easily add authentication, body parsing, and other common functionality to API routes. The middleware can be chained together in any order, providing flexibility in how you structure your endpoints.
