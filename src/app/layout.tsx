@@ -2,6 +2,7 @@ import "tailwindcss/tailwind.css";
 import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import HolyLoader from "holy-loader";
+import { Analytics } from "@vercel/analytics/next";
 
 import { Toaster } from "@/components/ui/sonner";
 import { DEFAULT_METADATA } from "@/lib/metadata";
@@ -20,6 +21,7 @@ export default function RootLayout({
           <HolyLoader />
           {children}
           <Toaster />
+          <Analytics />
         </body>
       </SessionProvider>
     </html>
